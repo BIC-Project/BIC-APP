@@ -22,7 +22,7 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int locationId;
 
-    @Column(columnDefinition = "varchar(30)", nullable = false)
+    @Column(columnDefinition = "varchar(30)", nullable = false, unique = true)
     private String locationName;
 
     @Column(columnDefinition = "varchar(200)", nullable = false)

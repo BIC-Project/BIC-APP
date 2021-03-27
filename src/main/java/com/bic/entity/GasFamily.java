@@ -23,4 +23,5 @@ public class GasFamily {
     private int gasFamilyId;
     @Column(columnDefinition = "varchar(30)", nullable = false)
     private String gasFamilyName;
+
 }
