@@ -17,5 +17,4 @@ public interface CylinderRepository extends JpaRepository<Cylinder, Integer> {
     public ArrayList<Cylinder> findByCylinderCapacity(Double cylinderCapacity);
 
     public ArrayList<Cylinder> findByCylinderUnit(CylinderUnit cylinderUnit);
-
 }
