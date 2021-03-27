@@ -19,7 +19,8 @@ public class User {
     @Id
     @Column(columnDefinition = "varchar(20)")
     private String userName;
-    @Column(columnDefinition = "varchar(20)")
+
+    @Column(columnDefinition = "varchar(20)", nullable = false)
     private String password;
     @Column(nullable = false, columnDefinition = "varchar(20)")
     private String roles;
