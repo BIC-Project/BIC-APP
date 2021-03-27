@@ -26,7 +26,11 @@ public class AuthJwtUtil {
     @Value("${app.secret}")
     private String SECRET;
 
-    public String AUTHORITIES_KEY = "roles";
+    @Value("${app.authority.key}")
+    private String AUTHORITIES_KEY;
+
+    @Value("${app.expiry.time}")
+    private int EXPIRE_TIME;
 
     public String extractUsername(String token) throws Exception {
 	return extractClaim(token, Claims::getSubject);
@@ -67,7 +71,6 @@ public class AuthJwtUtil {
 	Map<String, Object> claims = new HashMap<>();
 	String authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 		.collect(Collectors.joining(","));
-	System.out.println(authorities);
 	claims.put(AUTHORITIES_KEY, authorities);
 	return createToken(claims, userDetails.getUsername());
     }
@@ -75,7 +78,7 @@ public class AuthJwtUtil {
     private String createToken(Map<String, Object> claims, String subject) throws Exception {
 
 	return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-		.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+		.setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
 		.signWith(SignatureAlgorithm.HS256, SECRET).compact();
     }
 
