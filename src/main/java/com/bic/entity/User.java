@@ -17,9 +17,12 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
+    @Column(columnDefinition = "varchar(20)")
     private String userName;
-    @Column(unique = true, nullable = false)
+    @Column(columnDefinition = "varchar(20)")
     private String password;
+    @Column(nullable = false, columnDefinition = "varchar(20)")
+    private String roles;
 
     public User() {
 	super();
@@ -46,6 +49,21 @@ public class User {
 
     public void setPassword(String password) {
 	this.password = password;
+    }
+
+    public String getRoles() {
+	return roles;
+    }
+
+    public void setRoles(String roles) {
+	this.roles = roles;
+    }
+
+    public User(String userName, String password, String roles) {
+	super();
+	this.userName = userName;
+	this.password = password;
+	this.roles = roles;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.bic.filter;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -43,8 +45,9 @@ public class JwtFilter extends OncePerRequestFilter {
 	    if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 		UserDetails userDetails = service.loadUserByUsername(userName);
 		if (authJwtUtil.validateToken(token, userDetails)) {
+		    Collection<SimpleGrantedAuthority> authorities = authJwtUtil.getAuthorities(token);
 		    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-			    userDetails, null, userDetails.getAuthorities());
+			    userDetails, null, authorities);
 		    usernamePasswordAuthenticationToken
 			    .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
 		    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
