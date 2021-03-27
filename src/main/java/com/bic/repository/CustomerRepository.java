@@ -1,10 +1,6 @@
 package com.bic.repository;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
@@ -14,27 +10,24 @@ import com.bic.entity.Customer;
 @Repository
 public class CustomerRepository {
 
-	
-	@PersistenceContext
-	private EntityManager entityManager;
-	
-	public int save(Customer customer) {
-		Customer updatedCustomer = entityManager.merge(customer);
-		return updatedCustomer.getCustomerId();
-	}
-	
-	public Customer fetch(int customerId) {
-		return entityManager.find(Customer.class, customerId);
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public boolean isCustomerPresent(String customerName) {
-		return (Long)
-				entityManager
-				.createQuery("select count(c.id) from Customer c where c.customerName = :customerName") 
-				.setParameter("customerName", customerName)
-				.getSingleResult() == 1 ? true : false;
-	}
-	
+    public int save(Customer customer) {
+	Customer updatedCustomer = entityManager.merge(customer);
+	return updatedCustomer.getCustomerId();
+    }
+
+    public Customer fetch(int customerId) {
+	return entityManager.find(Customer.class, customerId);
+    }
+
+    public boolean isCustomerPresent(String customerName) {
+	return (Long) entityManager
+		.createQuery("select count(c.id) from Customer c where c.customerName = :customerName")
+		.setParameter("customerName", customerName).getSingleResult() == 1 ? true : false;
+    }
+
 //	public List<Customer> findAll() {
 //	    EntityManagerFactory factory = Persistence
 //	            .createEntityManagerFactory("persistenceUnitName");
