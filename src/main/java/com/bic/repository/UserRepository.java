@@ -6,6 +6,6 @@ import com.bic.entity.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-    User findByUserName(String username);
+    public User findByUserName(String username);
 
 }
