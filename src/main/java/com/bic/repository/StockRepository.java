@@ -14,7 +14,6 @@ import com.bic.entity.ReceiptType;
 import com.bic.entity.Stock;
 
 @Repository
-
 public class StockRepository {
 
     @PersistenceContext
@@ -22,22 +21,13 @@ public class StockRepository {
 
     public boolean saveAll(CylinderStockQty[] allCylinderStock, Customer customer, ReceiptType receiptType) {
 
-//	Session session = entityManager.unwrap(Session.class);
-//	Transaction tr = session.beginTransaction();
-
 	try {
-
 	    for (CylinderStockQty cylinderStockQty : allCylinderStock) {
 		Cylinder cylinder = new Cylinder();
 		cylinder.setCylinderId(cylinderStockQty.getCylinderId());
 		CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(customer,
 			cylinder);
 		entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_READ);
-//		Query query = session
-//			.createSQLQuery("select * from stock_tbl where cylinder_id = ? and customer_id = ? for update");
-//		query.setParameter(0, cylinderStockQty.getCylinderId());
-//		query.setParameter(1, customer.getCustomerId());
-//		query.executeUpdate();
 	    }
 
 	    for (CylinderStockQty cylinderStockQty : allCylinderStock) {
@@ -53,24 +43,19 @@ public class StockRepository {
 		} else {
 		    if (receiptType.equals(ReceiptType.ER)) {
 			int oldCylinderStock = stock.getCylinderStock();
-			// adding of stock
 			stock.setCylinderStock(oldCylinderStock + cylinderStock);
-
 		    } else {
 			int oldCylinderStock = stock.getCylinderStock();
-			if (cylinderStock > oldCylinderStock) {
-			    // entityManager.getTransaction().rollback();
+			if (cylinderStock > oldCylinderStock)
 			    return false;
-			}
 			stock.setCylinderStock(oldCylinderStock - cylinderStock);
 		    }
 		}
 	    }
-	    // entityManager.getTransaction().commit();
 	    return true;
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    // entityManager.getTransaction().rollback();
+
 	    return false;
 	}
     }
@@ -113,32 +98,3 @@ public class StockRepository {
     }
 
 }
-
-//
-//boolean isStockSaved;
-//for (CylinderStockQty cylinderStockQty : allCylinderStock) {
-//    Customer customer = receipt.getCustomer();
-//
-//    Cylinder cylinder = new Cylinder();
-//    cylinder.setCylinderId(cylinderStockQty.getCylinderId());
-//
-//    int cylinderStock = cylinderStockQty.getCylinderStock();
-//
-//    ReceiptType receiptType = receipt.getReceiptType();
-//    isStockSaved = stockRepository.save(customer, cylinder, cylinderStock, receiptType);
-//
-//}
-//
-//Stock stock = entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_WRITE);
-
-// Customer customer = receipt.getCustomer();
-// ReceiptType receiptType = receipt.getReceiptType();
-// String allCylinderStrJSON = receipt.getAllCylinders();
-// Gson gson = new Gson();
-// CylinderStockQty[] allCylinderStock = gson.fromJson(allCylinderStrJSON,
-// CylinderStockQty[].class);
-
-//if (allCylinderStrJSON == null || allCylinderStock.length <= 0) {
-//	entityManager.getTransaction().rollback();
-//	return false;
-//}

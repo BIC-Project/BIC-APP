@@ -16,7 +16,7 @@ import com.bic.repository.StockRepository;
 import com.google.gson.Gson;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ReceiptService {
 
     @Autowired
@@ -32,7 +32,6 @@ public class ReceiptService {
     private CylinderRepository cylinderRepository;
 
     public int saveReceipt(Receipt receipt) {
-
 	if (receiptRepository.existsById(receipt.getReceiptId()))
 	    throw new ReceiptServiceException("Receipt Id Already Exists!");
 	System.out.println(receipt.getReceiptType());
@@ -40,20 +39,16 @@ public class ReceiptService {
 	    throw new ReceiptServiceException("Receipt Type Error!");
 	if (!(customerRepository.isCustomerPresent(receipt.getCustomer().getCustomerId())))
 	    throw new ReceiptServiceException("Illegal Customer For Receipt!");
-
 	Customer customer = receipt.getCustomer();
 	ReceiptType receiptType = receipt.getReceiptType();
 	String allCylinderStrJSON = receipt.getAllCylinders();
 	System.out.println(allCylinderStrJSON + "dfgfds");
-
 	if (allCylinderStrJSON == null || allCylinderStrJSON.trim().isEmpty())
 	    throw new ReceiptServiceException("No Cylinders Found");
 	Gson gson = new Gson();
 	CylinderStockQty[] allCylinderStock = gson.fromJson(allCylinderStrJSON, CylinderStockQty[].class);
-
 	if (allCylinderStock.length <= 0)
 	    throw new ReceiptServiceException("No Cylinders Found");
-
 	for (CylinderStockQty cylinderStockQty : allCylinderStock) {
 	    int cylinderId = cylinderStockQty.getCylinderId();
 	    if (!cylinderRepository.existsById(cylinderId))
@@ -70,38 +65,3 @@ public class ReceiptService {
 
     }
 }
-
-//String allCylinderStrJSON = receipt.getAllCylinders();
-//
-//Gson gson = new Gson();
-//CylinderStockQty[] allCylinderStock = gson.fromJson(allCylinderStrJSON, CylinderStockQty[].class);
-//if (allCylinderStrJSON == null || allCylinderStock.length <= 0)
-//    throw new ReceiptServiceException("No cylinders found");
-//for (CylinderStockQty cylinderStockQty : allCylinderStock) {
-//    // check if cylinderId is valid call db
-//    // if not throw error
-//    // check if qty is valid -
-//}
-//
-//boolean isStockSaved;
-//for (CylinderStockQty cylinderStockQty : allCylinderStock) {
-//    Customer customer = receipt.getCustomer();
-//
-//    Cylinder cylinder = new Cylinder();
-//    cylinder.setCylinderId(cylinderStockQty.getCylinderId());
-//
-//    int cylinderStock = cylinderStockQty.getCylinderStock();
-//
-//    ReceiptType receiptType = receipt.getReceiptType();
-//    isStockSaved = stockRepository.save(customer, cylinder, cylinderStock, receiptType);
-//
-//}
-
-//check recepitid - if present throw error
-// check er or dr ...if not throw error
-// check valid customer id - if id not present throw error
-// first save stocks(pass customer, json of cylinder and qty)...if error throw
-// exception dont
-// if any cylinder or json not perfect or negative value....rollback and
-// throw error
-// if save stocks true....then save receipt - if error throw
