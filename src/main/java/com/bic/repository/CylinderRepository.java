@@ -10,11 +10,11 @@ import com.bic.entity.Gas;
 
 public interface CylinderRepository extends JpaRepository<Cylinder, Integer> {
 
-    public Cylinder findByCylinderId(Integer cylinderId);
+    public Cylinder findByCylinderId(int cylinderId);
 
     public ArrayList<Cylinder> findByGas(Gas gas);
 
-    public ArrayList<Cylinder> findByCylinderCapacity(Double cylinderCapacity);
+    public ArrayList<Cylinder> findByCylinderCapacity(double cylinderCapacity);
 
     public ArrayList<Cylinder> findByCylinderUnit(CylinderUnit cylinderUnit);
 }
