@@ -1,5 +1,5 @@
 package com.bic.entity;
 
 public enum CylinderUnit {
-    KG, LIT
+    KG, LT, M3
 }

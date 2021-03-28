@@ -2,45 +2,42 @@ package com.bic.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bic.dto.CylinderStockQty;
 import com.bic.entity.CompositeCustomerCylinder;
 import com.bic.entity.Customer;
 import com.bic.entity.Cylinder;
-import com.bic.entity.Receipt;
 import com.bic.entity.ReceiptType;
 import com.bic.entity.Stock;
-import com.google.gson.Gson;
 
 @Repository
+
 public class StockRepository {
 
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
 
-    public boolean saveAll(Receipt receipt) {
-	try {
-	    entityManager.getTransaction().begin();
-	    Customer customer = receipt.getCustomer();
-	    ReceiptType receiptType = receipt.getReceiptType();
-	    String allCylinderStrJSON = receipt.getAllCylinders();
-	    Gson gson = new Gson();
-	    CylinderStockQty[] allCylinderStock = gson.fromJson(allCylinderStrJSON, CylinderStockQty[].class);
+    public boolean saveAll(CylinderStockQty[] allCylinderStock, Customer customer, ReceiptType receiptType) {
 
-	    if (allCylinderStrJSON == null || allCylinderStock.length <= 0) {
-		entityManager.getTransaction().rollback();
-		return false;
-	    }
+//	Session session = entityManager.unwrap(Session.class);
+//	Transaction tr = session.beginTransaction();
+
+	try {
 
 	    for (CylinderStockQty cylinderStockQty : allCylinderStock) {
 		Cylinder cylinder = new Cylinder();
 		cylinder.setCylinderId(cylinderStockQty.getCylinderId());
 		CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(customer,
 			cylinder);
-		entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_WRITE);
+		entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_READ);
+//		Query query = session
+//			.createSQLQuery("select * from stock_tbl where cylinder_id = ? and customer_id = ? for update");
+//		query.setParameter(0, cylinderStockQty.getCylinderId());
+//		query.setParameter(1, customer.getCustomerId());
+//		query.executeUpdate();
 	    }
 
 	    for (CylinderStockQty cylinderStockQty : allCylinderStock) {
@@ -62,22 +59,20 @@ public class StockRepository {
 		    } else {
 			int oldCylinderStock = stock.getCylinderStock();
 			if (cylinderStock > oldCylinderStock) {
-			    entityManager.getTransaction().rollback();
+			    // entityManager.getTransaction().rollback();
 			    return false;
 			}
 			stock.setCylinderStock(oldCylinderStock - cylinderStock);
 		    }
 		}
 	    }
-	    entityManager.getTransaction().commit();
+	    // entityManager.getTransaction().commit();
 	    return true;
 	} catch (Exception e) {
-	    entityManager.getTransaction().rollback();
+	    e.printStackTrace();
+	    // entityManager.getTransaction().rollback();
 	    return false;
-	} finally {
-	    entityManager.flush();
 	}
-
     }
 
     public boolean save(Customer customer, Cylinder cylinder, int cylinderStock, ReceiptType receiptType) {
@@ -113,7 +108,7 @@ public class StockRepository {
 	    entityManager.getTransaction().rollback();
 	    return false;
 	} finally {
-	    entityManager.close();
+	    entityManager.flush();
 	}
     }
 
@@ -135,3 +130,15 @@ public class StockRepository {
 //}
 //
 //Stock stock = entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_WRITE);
+
+// Customer customer = receipt.getCustomer();
+// ReceiptType receiptType = receipt.getReceiptType();
+// String allCylinderStrJSON = receipt.getAllCylinders();
+// Gson gson = new Gson();
+// CylinderStockQty[] allCylinderStock = gson.fromJson(allCylinderStrJSON,
+// CylinderStockQty[].class);
+
+//if (allCylinderStrJSON == null || allCylinderStock.length <= 0) {
+//	entityManager.getTransaction().rollback();
+//	return false;
+//}
