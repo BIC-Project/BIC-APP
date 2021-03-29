@@ -13,9 +13,13 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
 
     public Receipt findByReceiptId(int receiptId);
 
-    public List<Receipt> findByReceiptTypeAndCustomer(ReceiptType receiptType, Customer customer);
+    // public List<Receipt> findByReceiptTypeAndCustomer(ReceiptType receiptType,
+    // Customer customer);
 
-    public List<Receipt> findByReceiptTypeAndCustomerAndDateTimeBetween(ReceiptType receiptType, Customer customer,
-	    Date start, Date end);
+    public List<Receipt> findByReceiptTypeAndCustomerAndDateTimeBetweenOrderByDateTimeDesc(ReceiptType receiptType,
+	    Customer customer, Date start, Date end);
+
+    public List<Receipt> findByReceiptTypeAndDateTimeBetweenOrderByDateTimeDesc(ReceiptType receiptType, Date start,
+	    Date end);
 
 }

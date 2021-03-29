@@ -1,5 +1,10 @@
 package com.bic.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +44,10 @@ public class ReceiptService {
 	    throw new ReceiptServiceException("Receipt Type Error!");
 	if (!(customerRepository.isCustomerPresent(receipt.getCustomer().getCustomerId())))
 	    throw new ReceiptServiceException("Illegal Customer For Receipt!");
+	if (!customerRepository.isCustomerActive(receipt.getCustomer().getCustomerId()))
+	    throw new ReceiptServiceException(
+		    "Selected Customer is Inactive! Please activate customer befor selecting");
+
 	Customer customer = receipt.getCustomer();
 	ReceiptType receiptType = receipt.getReceiptType();
 	String allCylinderStrJSON = receipt.getAllCylinders();
@@ -64,4 +73,58 @@ public class ReceiptService {
 	return receipt.getReceiptId();
 
     }
+
+    public List<Receipt> getReceiptList(String receiptType, String customerId, String fromDateTime, String toDateTime) {
+	if (receiptType == null)
+	    throw new ReceiptServiceException("Receipt Type not selected! Please select a valid receipt type");
+
+	if (!receiptType.equals(ReceiptType.ER.toString()) && !receiptType.equals(ReceiptType.DR.toString()))
+	    throw new ReceiptServiceException("Receipt Type Error!");
+
+	if (fromDateTime == null || fromDateTime.isBlank() || toDateTime == null || toDateTime.trim().equals(""))
+	    throw new ReceiptServiceException("Date is empty! Please select appropriate Date!");
+	Date fromDate, toDate;
+	try {
+	    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+	    fromDate = formatter.parse(fromDateTime);
+	    toDate = formatter.parse(toDateTime);
+	    Calendar c = Calendar.getInstance();
+	    c.setTime(toDate);
+	    c.add(Calendar.HOUR, 23);
+	    c.add(Calendar.MINUTE, 59);
+	    c.add(Calendar.SECOND, 59);
+	    toDate = c.getTime();
+	} catch (Exception e) {
+	    throw new ReceiptServiceException("Invalid date. Please select appropriate date!");
+	}
+
+	if (fromDate.compareTo(toDate) > 0)
+	    throw new ReceiptServiceException("Invalid Date! End-date greater than start-date.");
+
+	if (customerId == null || customerId.isBlank()) {
+	    return receiptRepository.findByReceiptTypeAndDateTimeBetweenOrderByDateTimeDesc(
+		    ReceiptType.valueOf(receiptType), fromDate, toDate);
+	}
+	try {
+	    Integer custId = Integer.parseInt(customerId);
+	    if (!customerRepository.isCustomerPresent(custId))
+		throw new ReceiptServiceException();
+	    Customer customer = new Customer();
+	    customer.setCustomerId(custId);
+	    return receiptRepository.findByReceiptTypeAndCustomerAndDateTimeBetweenOrderByDateTimeDesc(
+		    ReceiptType.valueOf(receiptType), customer, fromDate, toDate);
+	} catch (Exception e) {
+	    throw new ReceiptServiceException("Invalid Customer ID!");
+	}
+    }
 }
+
+//if (customerId == null)
+//{
+//    
+//}
+//    if (!customerRepository.isCustomerPresent(customerId))
+//	throw new ReceiptServiceException("Invalid Customer!");
+//
+//Customer customer = new Customer();
+//customer.setCustomerId(customerId);
