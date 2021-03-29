@@ -29,7 +29,6 @@ public class StockRepository {
 			cylinder);
 		entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_READ);
 	    }
-
 	    for (CylinderStockQty cylinderStockQty : allCylinderStock) {
 		Cylinder cylinder = new Cylinder();
 		int cylinderStock = cylinderStockQty.getCylinderStock();
@@ -54,46 +53,7 @@ public class StockRepository {
 	    }
 	    return true;
 	} catch (Exception e) {
-	    e.printStackTrace();
-
 	    return false;
-	}
-    }
-
-    public boolean save(Customer customer, Cylinder cylinder, int cylinderStock, ReceiptType receiptType) {
-	try {
-	    entityManager.getTransaction().begin();
-	    CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(customer, cylinder);
-
-	    Stock stock = entityManager.find(Stock.class, compositeCustomerCylinderPK, LockModeType.PESSIMISTIC_WRITE);
-	    if (stock == null) {
-		Stock newStock = new Stock(compositeCustomerCylinderPK, cylinderStock);
-		entityManager.persist(newStock);
-		entityManager.getTransaction().commit();
-		return true;
-	    } else {
-		if (receiptType.equals(ReceiptType.ER)) {
-		    int oldCylinderStock = stock.getCylinderStock();
-		    // adding of stock
-		    stock.setCylinderStock(oldCylinderStock + cylinderStock);
-		    entityManager.getTransaction().commit();
-		    return true;
-		} else {
-		    int oldCylinderStock = stock.getCylinderStock();
-		    if (cylinderStock > oldCylinderStock) {
-			entityManager.getTransaction().rollback();
-			return false;
-		    }
-		    stock.setCylinderStock(oldCylinderStock - cylinderStock);
-		    entityManager.getTransaction().commit();
-		    return true;
-		}
-	    }
-	} catch (Exception e) {
-	    entityManager.getTransaction().rollback();
-	    return false;
-	} finally {
-	    entityManager.flush();
 	}
     }
 
