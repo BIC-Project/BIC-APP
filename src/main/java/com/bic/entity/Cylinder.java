@@ -34,6 +34,6 @@ public class Cylinder {
     private double cylinderCapacity;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('KG', 'LIT')", nullable = false)
+    @Column(columnDefinition = "ENUM('KG', 'LT', 'M3')", nullable = false)
     private CylinderUnit cylinderUnit;
 }

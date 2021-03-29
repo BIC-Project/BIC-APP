@@ -15,7 +15,6 @@ import com.bic.dto.LocationGetAllStatus;
 import com.bic.dto.LocationGetStatus;
 import com.bic.dto.Status.StatusType;
 import com.bic.entity.Location;
-import com.bic.exception.CylinderServiceException;
 import com.bic.exception.LocationServiceException;
 import com.bic.service.LocationService;
 
@@ -53,7 +52,7 @@ public class LocationController {
 	    status.setStatus(StatusType.SUCCESS);
 	    status.setMessage("Location Found");
 	    return new ResponseEntity<>(status, HttpStatus.OK);
-	} catch (CylinderServiceException e) {
+	} catch (LocationServiceException e) {
 	    status.setStatus(StatusType.FAILURE);
 	    status.setMessage(e.getMessage());
 	    return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
