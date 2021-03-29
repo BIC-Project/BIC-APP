@@ -81,7 +81,7 @@ public class ReceiptService {
 	if (!receiptType.equals(ReceiptType.ER.toString()) && !receiptType.equals(ReceiptType.DR.toString()))
 	    throw new ReceiptServiceException("Receipt Type Error!");
 
-	if (fromDateTime == null || fromDateTime.isBlank() || toDateTime == null || toDateTime.trim().equals(""))
+	if (fromDateTime == null || fromDateTime.trim().isEmpty() || toDateTime == null || toDateTime.trim().equals(""))
 	    throw new ReceiptServiceException("Date is empty! Please select appropriate Date!");
 	Date fromDate, toDate;
 	try {
@@ -101,7 +101,7 @@ public class ReceiptService {
 	if (fromDate.compareTo(toDate) > 0)
 	    throw new ReceiptServiceException("Invalid Date! End-date greater than start-date.");
 
-	if (customerId == null || customerId.isBlank()) {
+	if (customerId == null || customerId.trim().isEmpty() ) {
 	    return receiptRepository.findByReceiptTypeAndDateTimeBetweenOrderByDateTimeDesc(
 		    ReceiptType.valueOf(receiptType), fromDate, toDate);
 	}
