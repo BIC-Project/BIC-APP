@@ -81,5 +81,10 @@ public class CustomerRepository {
 	// perform update
 	this.entityManager.createQuery(update).executeUpdate();
     }
+    
+    public boolean isCustomerActive(int customerId) {
+    	return (boolean) entityManager.createQuery("select isActive from Customer c where c.customerId = :customerId")
+    		.setParameter("customerId", customerId).getSingleResult();    
+        }
 
 }

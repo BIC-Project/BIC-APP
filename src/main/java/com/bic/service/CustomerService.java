@@ -36,7 +36,8 @@ public class CustomerService {
     }
 
     public List<Customer> getAll() {
-	return customerRepository.findAll();
+    	System.out.println( customerRepository.isCustomerActive(1) );
+    	return customerRepository.findAll();
     }
 
     public void update(Customer customer) throws CustomerServiceException {
