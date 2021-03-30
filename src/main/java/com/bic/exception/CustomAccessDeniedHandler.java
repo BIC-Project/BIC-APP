@@ -13,10 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    @Override
-    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-	    AccessDeniedException e) throws IOException, ServletException {
-	httpServletResponse.sendError(403, "Access Denied");
-    }
+	@Override
+	public void handle(HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse, AccessDeniedException e)
+			throws IOException, ServletException {
+		httpServletResponse.sendError(403, "Access Denied");
+	}
 
 }
