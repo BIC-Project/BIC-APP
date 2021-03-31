@@ -126,6 +126,21 @@ public class ReceiptService {
 
 	}
 
+	public Receipt updateReceipt(Receipt receipt) throws InterruptedException {
+
+		// receipt -check receipt id ---if not present or null return
+		// if receiptno is null error or receipt id is null
+
+		// get old receipt -
+		// check receiptno - old receipt number...if missmatch error.
+
+		// check all other like previous
+
+		// string all cylinders-----
+
+		return null;
+	}
+
 	public List<Receipt> getReceiptList(String receiptType, String customerId,
 			String fromDateTime, String toDateTime, String pageNoStr,
 			String sizeStr) {
@@ -194,13 +209,3 @@ public class ReceiptService {
 		}
 	}
 }
-
-// if (customerId == null)
-// {
-//
-// }
-// if (!customerRepository.isCustomerPresent(customerId))
-// throw new ReceiptServiceException("Invalid Customer!");
-//
-// Customer customer = new Customer();
-// customer.setCustomerId(customerId);
