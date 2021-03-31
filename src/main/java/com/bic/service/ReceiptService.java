@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 @Transactional(rollbackFor = Exception.class)
 public class ReceiptService {
 
+
 	@Value("${app.max.receipt.no}")
 	private Integer maxReceiptNo;
 	@Value("${app.config.receiptNoCountER}")
@@ -124,6 +125,7 @@ public class ReceiptService {
 					"Error Saving Receipt. Please Try Again!");
 		return receipt;
 
+
 	}
 
 	public Receipt updateReceipt(Receipt receipt) throws InterruptedException {
@@ -139,6 +141,7 @@ public class ReceiptService {
 		// string all cylinders-----
 
 		return null;
+
 	}
 
 	public List<Receipt> getReceiptList(String receiptType, String customerId,
