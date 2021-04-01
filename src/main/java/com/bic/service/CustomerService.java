@@ -1,6 +1,7 @@
 package com.bic.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,10 @@ public class CustomerService {
     private CustomerRepository customerRepository;
 
     public int register(Customer customer) throws CustomerServiceException {
-	if (!customerRepository.isCustomerPresent(customer.getCustomerName())) {
+	if (!customerRepository.existsByCustomerName(customer.getCustomerName())) {
 	    customer.setActive(true);
-	    return customerRepository.save(customer);
+	    Customer custObj = customerRepository.save(customer);
+	    return custObj.getCustomerId();
 	    // suppose we want to send an email confirmation
 	    // then that code will be here..
 	} else
@@ -29,26 +31,25 @@ public class CustomerService {
 
     public Customer get(int customerId) throws CustomerServiceException {
 
-	Customer customer = customerRepository.fetch(customerId);
-	if (customer == null)
-	    throw new CustomerServiceException("Customer Not Found");
-	return customer;
+		Optional<Customer> customer = customerRepository.findById(customerId);
+		if (customer == null)
+		    throw new CustomerServiceException("Customer Not Found");
+		return customer.get();
     }
 
     public List<Customer> getAll() {
-    	System.out.println( customerRepository.isCustomerActive(1) );
-    	return customerRepository.findAll();
+    	return customerRepository.findAllByOrderByCustomerNameAsc();
     }
 
     public void update(Customer customer) throws CustomerServiceException {
-	if (customerRepository.isCustomerPresent(customer.getCustomerId())) {
-	    if (customerRepository.isCustomerPresent(customer.getCustomerName())) {
-		throw new CustomerServiceException("Customer Name Already Present");
-	    } else
-		customerRepository.modifyCustomer(customer);
-	} else {
-	    throw new CustomerServiceException("Customer ID Already Present");
-	}
+		if (customerRepository.existsById(customer.getCustomerId())) {
+		    if (customerRepository.existsByCustomerName(customer.getCustomerName())) {
+		    	throw new CustomerServiceException("Customer Name Already Present");
+		    } else
+		    	customerRepository.save(customer);
+		} else {
+		    throw new CustomerServiceException("Customer ID Already Present");
+		}
     }
 
 }

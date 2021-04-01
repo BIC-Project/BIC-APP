@@ -62,10 +62,10 @@ public class ReceiptService {
 				&& receipt.getReceiptType() != ReceiptType.DR)
 			throw new ReceiptServiceException("Receipt Type Error!");
 		if (!(customerRepository
-				.isCustomerPresent(receipt.getCustomer().getCustomerId())))
+				.existsById(receipt.getCustomer().getCustomerId())))
 			throw new ReceiptServiceException("Illegal Customer For Receipt!");
 		if (!customerRepository
-				.isCustomerActive(receipt.getCustomer().getCustomerId()))
+				.existsById(receipt.getCustomer().getCustomerId()))
 			throw new ReceiptServiceException(
 					"Selected Customer is Inactive! Please activate customer befor selecting");
 		Customer customer = receipt.getCustomer();
@@ -203,7 +203,7 @@ public class ReceiptService {
 		}
 		try {
 			Integer custId = Integer.parseInt(customerId);
-			if (!customerRepository.isCustomerPresent(custId))
+			if (!customerRepository.existsById(custId))
 				throw new ReceiptServiceException();
 			Customer customer = new Customer();
 			customer.setCustomerId(custId);
