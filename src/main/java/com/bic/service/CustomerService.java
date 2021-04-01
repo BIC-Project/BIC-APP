@@ -15,41 +15,59 @@ import com.bic.repository.CustomerRepository;
 @Transactional
 public class CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+	@Autowired
+	private CustomerRepository customerRepository;
 
-    public int register(Customer customer) throws CustomerServiceException {
-	if (!customerRepository.existsByCustomerName(customer.getCustomerName())) {
-	    customer.setActive(true);
-	    Customer custObj = customerRepository.save(customer);
-	    return custObj.getCustomerId();
-	    // suppose we want to send an email confirmation
-	    // then that code will be here..
-	} else
-	    throw new CustomerServiceException("Customer Is Already Registered!");
-    }
+	public int register(Customer customer) throws CustomerServiceException {
+		if (!customerRepository
+				.existsByCustomerName(customer.getCustomerName())) {
+			customer.setActive(true);
+			Customer custObj = customerRepository.save(customer);
+			return custObj.getCustomerId();
+			// suppose we want to send an email confirmation
+			// then that code will be here..
+		} else
+			throw new CustomerServiceException(
+					"Customer Name is Already Exists!");
+	}
 
-    public Customer get(int customerId) throws CustomerServiceException {
+	public Customer get(int customerId) throws CustomerServiceException {
 
 		Optional<Customer> customer = customerRepository.findById(customerId);
-		if (customer == null)
-		    throw new CustomerServiceException("Customer Not Found");
+		if (!customer.isPresent())
+			throw new CustomerServiceException("Illegal Customer Id!");
 		return customer.get();
-    }
+	}
 
-    public List<Customer> getAll() {
-    	return customerRepository.findAllByOrderByCustomerNameAsc();
-    }
+	public List<Customer> getAll() {
+		List<Customer> allCustomer = customerRepository
+				.findAllByOrderByCustomerNameAsc();
+		if (allCustomer == null || allCustomer.isEmpty())
+			throw new CustomerServiceException("Customers not found");
+		return allCustomer;
+	}
 
-    public void update(Customer customer) throws CustomerServiceException {
-		if (customerRepository.existsById(customer.getCustomerId())) {
-		    if (customerRepository.existsByCustomerName(customer.getCustomerName())) {
-		    	throw new CustomerServiceException("Customer Name Already Present");
-		    } else
-		    	customerRepository.save(customer);
-		} else {
-		    throw new CustomerServiceException("Customer ID Already Present");
-		}
-    }
+	public void update(Customer customer) throws CustomerServiceException {
+
+		if (Integer.valueOf(customer.getCustomerId()) == null
+				|| customer.getCustomerName() == null
+				|| customer.getCustomerName().trim().isEmpty())
+			throw new CustomerServiceException(
+					"Error! Customer Id/Name not present!");
+
+		Optional<Customer> oldCustomerOpt = customerRepository
+				.findById(customer.getCustomerId());
+
+		if (!oldCustomerOpt.isPresent())
+			throw new CustomerServiceException("Illegel Customer Id");
+
+		Customer oldCustomer = oldCustomerOpt.get();
+		if (!oldCustomer.getCustomerName()
+				.equalsIgnoreCase(customer.getCustomerName()))
+			throw new CustomerServiceException("Cannot Change Customer Name!");
+
+		customerRepository.save(customer);
+
+	}
 
 }
