@@ -47,7 +47,7 @@ public class ReceiptController {
 			MethodArgumentNotValidException e) {
 		ValidationErrorStatus status = new ValidationErrorStatus();
 		status.setStatus(StatusType.FAILURE);
-		status.setMessage("Validation Error");
+		status.setMessage("Validation error");
 		Map<String, String> errors = new HashMap<>();
 		e.getBindingResult().getAllErrors().forEach((error) -> {
 			String fieldName = ((FieldError) error).getField();
@@ -65,7 +65,7 @@ public class ReceiptController {
 			ConstraintViolationException e) {
 		ValidationErrorStatus status = new ValidationErrorStatus();
 		status.setStatus(StatusType.FAILURE);
-		status.setMessage("Validation Error");
+		status.setMessage("Validation error");
 		Map<String, String> errors = new HashMap<>();
 		e.getConstraintViolations().forEach((error) -> {
 			String fieldName = error.getPropertyPath().toString();
@@ -88,7 +88,7 @@ public class ReceiptController {
 			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Receipt Created Successfuly!");
+			status.setMessage("Receipt created successfuly!");
 			status.setReceipt(outputReceipt);
 			return new ResponseEntity<ReceiptCRUDStatus>(status,
 					HttpStatus.CREATED);
@@ -113,7 +113,7 @@ public class ReceiptController {
 			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Receipt Deleted Successfully!");
+			status.setMessage("Receipt deleted successfully!");
 			status.setReceipt(outputReceipt);
 			return new ResponseEntity<ReceiptCRUDStatus>(status,
 					HttpStatus.CREATED);
@@ -129,7 +129,7 @@ public class ReceiptController {
 	@GetMapping("/receipt")
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ReceiptGetAllStatus> receiptList(
-			@RequestParam("receiptType") @Pattern(regexp = "^[ED]R$", message = "Invalid receipt type selected. A valid receipt type is ER or DR.") @NotBlank(message = "Receipt type cannot be blank.") String receiptType,
+			@RequestParam("receiptType") @Pattern(regexp = "^[ED]R$", message = "Invalid receipt type. A valid receipt type is ER or DR.") @NotBlank(message = "Receipt type cannot be blank.") String receiptType,
 			@RequestParam(name = "customerId", required = false) String customerId,
 			@RequestParam("fromDateTime") String fromDateTime,
 			@RequestParam("toDateTime") String toDateTime,
@@ -142,7 +142,7 @@ public class ReceiptController {
 					receiptType, customerId, fromDateTime, toDateTime, pageNo,
 					size);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Receipts fetched Successfully!");
+			status.setMessage("Receipts found.");
 			status.setAllReceipt(lr);
 			return new ResponseEntity<ReceiptGetAllStatus>(status,
 					HttpStatus.OK);

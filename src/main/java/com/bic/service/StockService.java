@@ -28,15 +28,15 @@ public class StockService {
 	public List<Stock> getbyCustomerId(int customerId) {
 
 		if (!customerRepository.existsById((customerId)))
-			throw new StockServiceException("Invalid customer");
+			throw new StockServiceException("Invalid customer id.");
 
 		Optional<Customer> customer = customerRepository.findById(customerId);
-		
+
 		List<Stock> stocklst = stockJPARepository
 				.findAllStocksByCustomer(customer.get());
 		if (stocklst == null)
 			throw new StockServiceException(
-					"No stock found for given customer");
+					"No stocks found for given customer.");
 		return stocklst;
 	}
 
@@ -50,13 +50,13 @@ public class StockService {
 			if (sizeStr == null || sizeStr.trim().isEmpty())
 				size = Math.abs(Integer.parseInt(pageNoStr));
 		} catch (Exception e) {
-			throw new StockServiceException("Invalid Page No or Page Size");
+			throw new StockServiceException("Invalid page no./page size.");
 		}
 
 		Pageable page = PageRequest.of(pageNo, size);
 		List<Stock> stocklst = stockJPARepository.findAllStocks(page);
 		if (stocklst == null)
-			throw new StockServiceException("No stocks found");
+			throw new StockServiceException("No stocks found.");
 		return stocklst;
 	}
 }

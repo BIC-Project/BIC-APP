@@ -27,15 +27,14 @@ public class CustomerService {
 			// suppose we want to send an email confirmation
 			// then that code will be here..
 		} else
-			throw new CustomerServiceException(
-					"Customer Name is Already Exists!");
+			throw new CustomerServiceException("Customer name already exists!");
 	}
 
 	public Customer get(int customerId) throws CustomerServiceException {
 
 		Optional<Customer> customer = customerRepository.findById(customerId);
 		if (!customer.isPresent())
-			throw new CustomerServiceException("Illegal Customer Id!");
+			throw new CustomerServiceException("Illegal customer id!");
 		return customer.get();
 	}
 
@@ -43,7 +42,7 @@ public class CustomerService {
 		List<Customer> allCustomer = customerRepository
 				.findAllByOrderByCustomerNameAsc();
 		if (allCustomer == null || allCustomer.isEmpty())
-			throw new CustomerServiceException("Customers not found");
+			throw new CustomerServiceException("No customer found.");
 		return allCustomer;
 	}
 
@@ -53,18 +52,18 @@ public class CustomerService {
 				|| customer.getCustomerName() == null
 				|| customer.getCustomerName().trim().isEmpty())
 			throw new CustomerServiceException(
-					"Error! Customer Id/Name not present!");
+					"Error! Customer id/name not present!");
 
 		Optional<Customer> oldCustomerOpt = customerRepository
 				.findById(customer.getCustomerId());
 
 		if (!oldCustomerOpt.isPresent())
-			throw new CustomerServiceException("Illegel Customer Id");
+			throw new CustomerServiceException("Illegel customer id.");
 
 		Customer oldCustomer = oldCustomerOpt.get();
 		if (!oldCustomer.getCustomerName()
 				.equalsIgnoreCase(customer.getCustomerName()))
-			throw new CustomerServiceException("Cannot Change Customer Name!");
+			throw new CustomerServiceException("Cannot change customer name!");
 
 		customerRepository.save(customer);
 

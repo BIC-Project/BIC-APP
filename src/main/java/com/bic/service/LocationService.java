@@ -14,23 +14,23 @@ import com.bic.repository.LocationRepository;
 @Transactional
 public class LocationService {
 
-    @Autowired
-    private LocationRepository locationRepository;
+	@Autowired
+	private LocationRepository locationRepository;
 
-    public Location get(int locationId) {
-	Location location = locationRepository.findByLocationId(locationId);
-	if (location != null)
-	    return location;
-	else
-	    throw new LocationServiceException("Location ID is invalid");
-    }
-
-    public List<Location> getAll() {
-	List<Location> allLocations = locationRepository.findAll();
-	if (!allLocations.isEmpty()) {
-	    return allLocations;
-	} else {
-	    throw new LocationServiceException("There are No Locations");
+	public Location get(int locationId) {
+		Location location = locationRepository.findByLocationId(locationId);
+		if (location != null)
+			return location;
+		else
+			throw new LocationServiceException("Location id is invalid.");
 	}
-    }
+
+	public List<Location> getAll() {
+		List<Location> allLocations = locationRepository.findAll();
+		if (!allLocations.isEmpty()) {
+			return allLocations;
+		} else {
+			throw new LocationServiceException("No locations found.");
+		}
+	}
 }

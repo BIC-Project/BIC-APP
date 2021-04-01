@@ -56,34 +56,36 @@ public class ReceiptService {
 
 	public Receipt saveReceipt(Receipt receipt) throws InterruptedException {
 		if (receiptRepository.existsById(receipt.getReceiptId()))
-			throw new ReceiptServiceException("Receipt Id Already Exists!");
+			throw new ReceiptServiceException("Receipt id already exists!");
 		System.out.println(receipt.getReceiptType());
 		if (receipt.getReceiptType() != ReceiptType.ER
 				&& receipt.getReceiptType() != ReceiptType.DR)
-			throw new ReceiptServiceException("Receipt Type Error!");
+			throw new ReceiptServiceException("Receipt type is invalid!");
 		if (!(customerRepository
 				.existsById(receipt.getCustomer().getCustomerId())))
-			throw new ReceiptServiceException("Illegal Customer For Receipt!");
-		if (!customerRepository
-				.existsById(receipt.getCustomer().getCustomerId()))
+			throw new ReceiptServiceException("Illegal customer.");
+		Optional<Customer> customerOpt = customerRepository
+				.findById(receipt.getCustomer().getCustomerId());
+		Customer customer = customerOpt.get();
+
+		if (!customer.isActive())
 			throw new ReceiptServiceException(
-					"Selected Customer is Inactive! Please activate customer befor selecting");
-		Customer customer = receipt.getCustomer();
+					"Selected customer is inactive! Please activate the customer!");
 		ReceiptType receiptType = receipt.getReceiptType();
 		String allCylinderStrJSON = receipt.getAllCylinders();
 		if (allCylinderStrJSON == null || allCylinderStrJSON.trim().isEmpty())
-			throw new ReceiptServiceException("No Cylinders Found");
+			throw new ReceiptServiceException("No cylinders found.");
 		Gson gson = new Gson();
 		CylinderStockQty[] allCylinderStock = gson.fromJson(allCylinderStrJSON,
 				CylinderStockQty[].class);
 		if (allCylinderStock.length <= 0)
-			throw new ReceiptServiceException("No Cylinders Found");
+			throw new ReceiptServiceException("No cylinders found.");
 		for (CylinderStockQty cylinderStockQty : allCylinderStock) {
 			int cylinderId = cylinderStockQty.getCylinderId();
 			if (!cylinderRepository.existsById(cylinderId))
-				throw new ReceiptServiceException("Illegal Cylinder Id");
+				throw new ReceiptServiceException("Illegal cylinder id.");
 			if (cylinderStockQty.getCylinderStock() <= 0)
-				throw new ReceiptServiceException("Illegal Cylinder Qty");
+				throw new ReceiptServiceException("Illegal cylinder qty.");
 		}
 		boolean isStockSaved = stockRepository.saveAll(allCylinderStock,
 				customer, receiptType);
@@ -123,24 +125,8 @@ public class ReceiptService {
 			receiptRepository.save(receipt);
 		} else
 			throw new ReceiptServiceException(
-					"Error Saving Receipt. Please Try Again!");
+					"Error saving receipt. Please try again!");
 		return receipt;
-
-	}
-
-	public Receipt updateReceipt(Receipt receipt) throws InterruptedException {
-
-		// receipt -check receipt id ---if not present or null return
-		// if receiptno is null error or receipt id is null
-
-		// get old receipt -
-		// check receiptno - old receipt number...if missmatch error.
-
-		// check all other like previous
-
-		// string all cylinders-----
-
-		return null;
 
 	}
 
@@ -149,11 +135,11 @@ public class ReceiptService {
 			String toDateTime, String pageNoStr, String sizeStr) {
 		if (receiptType == null)
 			throw new ReceiptServiceException(
-					"Receipt Type not selected! Please select a valid receipt type");
+					"Receipt type not selected! Please select a valid receipt type.");
 
 		if (!receiptType.equals(ReceiptType.ER.toString())
 				&& !receiptType.equals(ReceiptType.DR.toString()))
-			throw new ReceiptServiceException("Receipt Type Error!");
+			throw new ReceiptServiceException("Receipt type is invalid!");
 
 		if (receiptStatus == null)
 			receiptStatus = true;
@@ -161,7 +147,7 @@ public class ReceiptService {
 		if (fromDateTime == null || fromDateTime.trim().isEmpty()
 				|| toDateTime == null || toDateTime.trim().isEmpty())
 			throw new ReceiptServiceException(
-					"Date is empty! Please select appropriate Date!");
+					"Date is empty! Please select appropriate date.");
 		Date fromDate, toDate;
 		try {
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -175,12 +161,12 @@ public class ReceiptService {
 			toDate = c.getTime();
 		} catch (Exception e) {
 			throw new ReceiptServiceException(
-					"Invalid date. Please select appropriate date!");
+					"Invalid date! Please select appropriate date.");
 		}
 
 		if (fromDate.compareTo(toDate) > 0)
 			throw new ReceiptServiceException(
-					"Invalid Date! End-date greater than start-date.");
+					"Invalid date! End-date greater than start-date.");
 
 		int pageNo = 0;
 		int size = 10;
@@ -191,7 +177,7 @@ public class ReceiptService {
 			if (sizeStr != null && !sizeStr.trim().isEmpty())
 				size = Math.abs(Integer.parseInt(sizeStr));
 		} catch (Exception e) {
-			throw new ReceiptServiceException("Invalid page No.");
+			throw new ReceiptServiceException("Invalid page no.");
 		}
 		Pageable page = PageRequest.of(pageNo, size);
 		if (customerId == null || customerId.trim().isEmpty()) {
@@ -211,7 +197,7 @@ public class ReceiptService {
 							receiptStatus, ReceiptType.valueOf(receiptType),
 							customer, fromDate, toDate, page);
 		} catch (Exception e) {
-			throw new ReceiptServiceException("Invalid Customer ID!");
+			throw new ReceiptServiceException("Invalid customer id!");
 		}
 	}
 
@@ -220,7 +206,7 @@ public class ReceiptService {
 
 		Optional<Receipt> optReceipt = receiptRepository.findById(receiptId);
 		if (!optReceipt.isPresent())
-			throw new ReceiptServiceException("Receipt Not Found");
+			throw new ReceiptServiceException("Receipt not found.");
 		else {
 			Receipt receipt = optReceipt.get();
 			SimpleDateFormat formatter = new SimpleDateFormat(
@@ -229,7 +215,7 @@ public class ReceiptService {
 			if (receipt.getDateTime().compareTo(currdate) >= 5
 					|| receipt.getDateTime().compareTo(currdate) < 0)
 				throw new ReceiptServiceException(
-						"Cannot Delete Older Receipts");
+						"Cannot delete an older receipt.");
 			/////////////
 			String allCylinderStrJSON = receipt.getAllCylinders();
 			if (allCylinderStrJSON == null
@@ -239,19 +225,19 @@ public class ReceiptService {
 			CylinderStockQty[] allCylinderStock = gson
 					.fromJson(allCylinderStrJSON, CylinderStockQty[].class);
 			if (allCylinderStock.length <= 0)
-				throw new ReceiptServiceException("No Cylinders Found");
+				throw new ReceiptServiceException("No cylinders found.");
 			for (CylinderStockQty cylinderStockQty : allCylinderStock) {
 				int cylinderId = cylinderStockQty.getCylinderId();
 				if (!cylinderRepository.existsById(cylinderId))
-					throw new ReceiptServiceException("Illegal Cylinder Id");
+					throw new ReceiptServiceException("Illegal cylinder id.");
 				if (cylinderStockQty.getCylinderStock() <= 0)
-					throw new ReceiptServiceException("Illegal Cylinder Qty");
+					throw new ReceiptServiceException("Illegal cylinder qty.");
 			}
 			boolean isdeleted = stockRepository.deleteAll(allCylinderStock,
 					receipt.getCustomer(), receipt.getReceiptType());
 			if (!isdeleted)
 				throw new ReceiptServiceException(
-						"Cannot delete the receipt. Stock quantity deviation");
+						"Cannot delete receipt. Stock quantity deviation.");
 			else {
 				receipt.setReceiptStatus(false);
 				receiptRepository.save(receipt);
