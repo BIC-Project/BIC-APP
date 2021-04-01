@@ -155,7 +155,7 @@ public class ReceiptService {
 				&& !receiptType.equals(ReceiptType.DR.toString()))
 			throw new ReceiptServiceException("Receipt Type Error!");
 
-		if (fromDateTime == null || fromDateTime.isBlank() || toDateTime == null
+		if (fromDateTime == null || fromDateTime.trim().isEmpty() || toDateTime == null
 				|| toDateTime.trim().equals(""))
 			throw new ReceiptServiceException(
 					"Date is empty! Please select appropriate Date!");
@@ -191,7 +191,7 @@ public class ReceiptService {
 			throw new ReceiptServiceException("Invalid page No.");
 		}
 		Pageable page = PageRequest.of(pageNo, size);
-		if (customerId == null || customerId.isBlank()) {
+		if (customerId == null || customerId.trim().isEmpty()) {
 			return receiptRepository
 					.findByReceiptTypeAndDateTimeBetweenOrderByDateTimeDesc(
 							ReceiptType.valueOf(receiptType), fromDate, toDate,
