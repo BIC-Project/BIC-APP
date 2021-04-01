@@ -22,40 +22,41 @@ import com.bic.service.LocationService;
 @CrossOrigin
 public class LocationController {
 
-    @Autowired
-    private LocationService locationService;
+	@Autowired
+	private LocationService locationService;
 
-    @GetMapping("/location")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<LocationGetAllStatus> getAllLocation() {
-	LocationGetAllStatus status = new LocationGetAllStatus();
-	try {
-	    List<Location> allLocation = locationService.getAll();
-	    status.setAllLocation(allLocation);
-	    status.setStatus(StatusType.SUCCESS);
-	    status.setMessage("Locations Found");
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	} catch (LocationServiceException e) {
-	    status.setStatus(StatusType.FAILURE);
-	    status.setMessage(e.getMessage());
-	    return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+	@GetMapping("/location")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<LocationGetAllStatus> getAllLocation() {
+		LocationGetAllStatus status = new LocationGetAllStatus();
+		try {
+			List<Location> allLocation = locationService.getAll();
+			status.setAllLocation(allLocation);
+			status.setStatus(StatusType.SUCCESS);
+			status.setMessage("Location found.");
+			return new ResponseEntity<>(status, HttpStatus.OK);
+		} catch (LocationServiceException e) {
+			status.setStatus(StatusType.FAILURE);
+			status.setMessage(e.getMessage());
+			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+		}
 	}
-    }
 
-    @GetMapping("/location/{locationId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<LocationGetStatus> getLocation(@PathVariable int locationId) {
-	LocationGetStatus status = new LocationGetStatus();
-	try {
-	    Location location = locationService.get(locationId);
-	    status.setLocation(location);
-	    status.setStatus(StatusType.SUCCESS);
-	    status.setMessage("Location Found");
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	} catch (LocationServiceException e) {
-	    status.setStatus(StatusType.FAILURE);
-	    status.setMessage(e.getMessage());
-	    return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+	@GetMapping("/location/{locationId}")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<LocationGetStatus> getLocation(
+			@PathVariable int locationId) {
+		LocationGetStatus status = new LocationGetStatus();
+		try {
+			Location location = locationService.get(locationId);
+			status.setLocation(location);
+			status.setStatus(StatusType.SUCCESS);
+			status.setMessage("Location found.");
+			return new ResponseEntity<>(status, HttpStatus.OK);
+		} catch (LocationServiceException e) {
+			status.setStatus(StatusType.FAILURE);
+			status.setMessage(e.getMessage());
+			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+		}
 	}
-    }
 }

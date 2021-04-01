@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bic.dto.Status.StatusType;
 import com.bic.dto.StockGetAllStatus;
 import com.bic.entity.Stock;
-import com.bic.exception.CylinderServiceException;
 import com.bic.service.StockService;
 
 @RestController
@@ -32,13 +31,12 @@ public class StockController {
 			@RequestParam(name = "size", required = false) String size) {
 		StockGetAllStatus status = new StockGetAllStatus();
 		try {
-
 			List<Stock> allStocks = stockService.getAll(pageNo, size);
 			status.setAllStocks(allStocks);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Stocks Found");
+			status.setMessage("Stocks found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
-		} catch (CylinderServiceException e) {
+		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
@@ -55,9 +53,9 @@ public class StockController {
 			List<Stock> allStocks = stockService.getbyCustomerId(customerId);
 			status.setAllStocks(allStocks);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Stocks Found for Customer");
+			status.setMessage("Stocks found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
-		} catch (CylinderServiceException e) {
+		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);

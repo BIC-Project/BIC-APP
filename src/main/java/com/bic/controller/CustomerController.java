@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bic.dto.CustomerGetAllStatus;
 import com.bic.dto.CustomerGetStatus;
 import com.bic.dto.CustomerRegisterStatus;
-import com.bic.dto.ValidationErrorStatus;
 import com.bic.dto.Status.StatusType;
+import com.bic.dto.ValidationErrorStatus;
 import com.bic.entity.Customer;
 import com.bic.exception.CustomerServiceException;
 import com.bic.service.CustomerService;
@@ -47,7 +47,7 @@ public class CustomerController {
 			MethodArgumentNotValidException e) {
 		ValidationErrorStatus status = new ValidationErrorStatus();
 		status.setStatus(StatusType.FAILURE);
-		status.setMessage("Validation Error");
+		status.setMessage("Validation error.");
 		Map<String, String> errors = new HashMap<>();
 		e.getBindingResult().getAllErrors().forEach((error) -> {
 			String fieldName = ((FieldError) error).getField();
@@ -65,7 +65,7 @@ public class CustomerController {
 			ConstraintViolationException e) {
 		ValidationErrorStatus status = new ValidationErrorStatus();
 		status.setStatus(StatusType.FAILURE);
-		status.setMessage("Validation Error");
+		status.setMessage("Validation error.");
 		Map<String, String> errors = new HashMap<>();
 		e.getConstraintViolations().forEach((error) -> {
 			String fieldName = error.getPropertyPath().toString();
@@ -86,7 +86,7 @@ public class CustomerController {
 			int id = customerService.register(customer);
 			CustomerRegisterStatus status = new CustomerRegisterStatus();
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Registration Successful!");
+			status.setMessage("Customer registered successfully!");
 			status.setRegisteredCustomerId(id);
 			return new ResponseEntity<CustomerRegisterStatus>(status,
 					HttpStatus.CREATED);
@@ -102,13 +102,13 @@ public class CustomerController {
 	@GetMapping("/customer/{customerId}")
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<CustomerGetStatus> getCustomer(
-			@PathVariable @Positive(message = "Customer Id should be positive integer") int customerId) {
+			@PathVariable @Positive(message = "Customer id should be positive integer") int customerId) {
 		CustomerGetStatus status = new CustomerGetStatus();
 		try {
 			Customer customer = customerService.get(customerId);
 			status.setCustomer(customer);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Customer Found");
+			status.setMessage("Customer found.");
 			return new ResponseEntity<CustomerGetStatus>(status, HttpStatus.OK);
 		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
@@ -127,7 +127,7 @@ public class CustomerController {
 			List<Customer> allCustomer = customerService.getAll();
 			status.setAllCustomer(allCustomer);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("List of Coustomers");
+			status.setMessage("Customer found.");
 			return new ResponseEntity<CustomerGetAllStatus>(status,
 					HttpStatus.OK);
 		} catch (Exception e) {
@@ -139,7 +139,6 @@ public class CustomerController {
 
 	}
 
-	//
 	@PutMapping("/customer")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<CustomerGetStatus> updateCustomer(
@@ -149,7 +148,7 @@ public class CustomerController {
 			customerService.update(customer);
 			status.setCustomer(customer);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Update Done");
+			status.setMessage("Customer updated successfully!");
 			return new ResponseEntity<CustomerGetStatus>(status, HttpStatus.OK);
 		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
@@ -159,13 +158,4 @@ public class CustomerController {
 		}
 
 	}
-	//
-	// @DeleteMapping(value = "providers/{id}")
-	// public String provDelete(@PathVariable longx id) {
-	// bikeService.removeBikeByProvId(id);
-	// providerService.removeProvider(id);
-	// return "success";
-	// }
-
-	// test commit -ankit
 }

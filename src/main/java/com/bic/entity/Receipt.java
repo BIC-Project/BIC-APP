@@ -43,7 +43,7 @@ public class Receipt {
 
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "ENUM('ER', 'DR')", nullable = false)
-	@Pattern(regexp = "^[ED]R$", message = "Invalid receipt type selected. A valid receipt type is ER or DR.")
+	@Pattern(regexp = "^[ED]R$", message = "Invalid receipt type. A valid receipt type is ER or DR.")
 	@NotBlank(message = "Receipt type cannot be blank.")
 	private ReceiptType receiptType;
 
@@ -62,11 +62,13 @@ public class Receipt {
 	private Customer customer;
 
 	@Column(columnDefinition = "varchar(30)", nullable = false)
-	@NotBlank(message = "Vehicle no cannot be blank.")
+	@NotBlank(message = "Vehicle no. cannot be blank.")
+	@Size(min = 3, max = 30, message = "Vehicle no. should be greater that 3 characters.")
 	private String vehicleNo;
 
 	@Column(columnDefinition = "varchar(30)", nullable = false)
 	@NotBlank(message = "Delivery person name cannot be blank.")
+	@Size(max = 30, message = "Delivery person name cannot be greater than 30 characters.")
 	private String deliveryPersonName;
 
 	@Column(columnDefinition = "varchar(10)", nullable = false)

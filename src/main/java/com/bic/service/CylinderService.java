@@ -14,24 +14,24 @@ import com.bic.repository.CylinderRepository;
 @Transactional
 public class CylinderService {
 
-    @Autowired
-    private CylinderRepository cylinderRepository;
+	@Autowired
+	private CylinderRepository cylinderRepository;
 
-    public Cylinder get(int cylinderId) {
-	Cylinder cylinder = cylinderRepository.findByCylinderId(cylinderId);
-	if (cylinder != null) {
-	    return cylinder;
-	} else {
-	    throw new CylinderServiceException("Cylinder ID is invalid");
+	public Cylinder get(int cylinderId) {
+		Cylinder cylinder = cylinderRepository.findByCylinderId(cylinderId);
+		if (cylinder != null) {
+			return cylinder;
+		} else {
+			throw new CylinderServiceException("Cylinder id is invalid.");
+		}
 	}
-    }
 
-    public List<Cylinder> getAll() {
-	List<Cylinder> allCylinders = cylinderRepository.findAll();
-	if (!allCylinders.isEmpty()) {
-	    return allCylinders;
-	} else {
-	    throw new CylinderServiceException("There are no Cylinders");
+	public List<Cylinder> getAll() {
+		List<Cylinder> allCylinders = cylinderRepository.findAll();
+		if (!allCylinders.isEmpty()) {
+			return allCylinders;
+		} else {
+			throw new CylinderServiceException("No cylinders found.");
+		}
 	}
-    }
 }

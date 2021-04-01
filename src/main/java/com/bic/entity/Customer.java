@@ -41,7 +41,7 @@ public class Customer {
 	private String customerAddress;
 
 	@Column(nullable = false, columnDefinition = "varchar(7)")
-	@Pattern(regexp = "^[1-9][0-9]{5}$", message = "Pin Code should be 6 digits. Ex. 416416")
+	@Pattern(regexp = "^[1-9][0-9]{5}$", message = "Pincode should be 6 digits. Ex. 416416")
 	@NotBlank(message = "Pincode cannot be empty.")
 	private String customerPinCode;
 

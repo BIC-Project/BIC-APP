@@ -35,7 +35,7 @@ public class CylinderController {
 			List<Cylinder> allCylinder = cylinderService.getAll();
 			status.setAllCylinder(allCylinder);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Cylinders Found");
+			status.setMessage("Cylinder found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
 		} catch (CylinderServiceException e) {
 			status.setStatus(StatusType.FAILURE);
@@ -53,7 +53,7 @@ public class CylinderController {
 			Cylinder cylinder = cylinderService.get(cylinderId);
 			status.setCylinder(cylinder);
 			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Cylinder Found");
+			status.setMessage("Cylinder found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
 		} catch (CylinderServiceException e) {
 			status.setStatus(StatusType.FAILURE);
