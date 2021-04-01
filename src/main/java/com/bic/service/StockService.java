@@ -1,6 +1,7 @@
 package com.bic.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -26,12 +27,13 @@ public class StockService {
 
 	public List<Stock> getbyCustomerId(int customerId) {
 
-		if (!customerRepository.isCustomerPresent(customerId))
+		if (!customerRepository.existsById((customerId)))
 			throw new StockServiceException("Invalid customer");
 
-		Customer customer = customerRepository.fetch(customerId);
+		Optional<Customer> customer = customerRepository.findById(customerId);
+		
 		List<Stock> stocklst = stockJPARepository
-				.findAllStocksByCustomer(customer);
+				.findAllStocksByCustomer(customer.get());
 		if (stocklst == null)
 			throw new StockServiceException(
 					"No stock found for given customer");

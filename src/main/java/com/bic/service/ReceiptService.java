@@ -220,7 +220,7 @@ public class ReceiptService {
 			throws ParseException {
 
 		Optional<Receipt> optReceipt = receiptRepository.findById(receiptId);
-		if (optReceipt.isEmpty())
+		if (!optReceipt.isPresent())
 			throw new ReceiptServiceException("Receipt Not Found");
 		else {
 			Receipt receipt = optReceipt.get();
