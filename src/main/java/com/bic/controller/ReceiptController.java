@@ -7,14 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bic.dto.ReceiptCreateModifyStatus;
+import com.bic.dto.ReceiptCRUDStatus;
 import com.bic.dto.ReceiptGetAllStatus;
 import com.bic.dto.Status.StatusType;
 import com.bic.entity.Receipt;
@@ -29,23 +30,55 @@ public class ReceiptController {
 
 	@PostMapping("/receipt")
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	public ResponseEntity<ReceiptCreateModifyStatus> saveReceipt(
+	public ResponseEntity<ReceiptCRUDStatus> saveReceipt(
 			@RequestBody Receipt receipt) {
 
 		try {
 			Receipt outputReceipt = receiptService.saveReceipt(receipt);
-			ReceiptCreateModifyStatus status = new ReceiptCreateModifyStatus();
+			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Receipt Created Successfuly!");
 			status.setReceipt(outputReceipt);
-			return new ResponseEntity<ReceiptCreateModifyStatus>(status,
+			return new ResponseEntity<ReceiptCRUDStatus>(status,
 					HttpStatus.CREATED);
 		} catch (Exception e) {
-			ReceiptCreateModifyStatus status = new ReceiptCreateModifyStatus();
+			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
-			return new ResponseEntity<ReceiptCreateModifyStatus>(status,
+			return new ResponseEntity<ReceiptCRUDStatus>(status,
+					HttpStatus.CONFLICT);
+		}
+	}
+
+	@GetMapping("/receipt/{receiptId}")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<ReceiptGetAllStatus> getReceipt() {
+
+		return null;
+	}
+
+	@DeleteMapping("/receipt/{receiptId}")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<ReceiptCRUDStatus> deleteReceipt(
+			@PathVariable int receiptId,
+			@RequestParam("currDateTime") String currDateTime) {
+
+		try {
+			Receipt outputReceipt = receiptService.deleteReceipt(receiptId,
+					currDateTime);
+			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
+
+			status.setStatus(StatusType.SUCCESS);
+			status.setMessage("Receipt Deleted Successfully!");
+			status.setReceipt(outputReceipt);
+			return new ResponseEntity<ReceiptCRUDStatus>(status,
+					HttpStatus.CREATED);
+		} catch (Exception e) {
+			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
+			status.setStatus(StatusType.FAILURE);
+			status.setMessage(e.getMessage());
+			return new ResponseEntity<ReceiptCRUDStatus>(status,
 					HttpStatus.CONFLICT);
 		}
 	}
@@ -57,12 +90,14 @@ public class ReceiptController {
 			@RequestParam(name = "customerId", required = false) String customerId,
 			@RequestParam("fromDateTime") String fromDateTime,
 			@RequestParam("toDateTime") String toDateTime,
+			@RequestParam(name = "receiptStatus", required = false) Boolean receiptStatus,
 			@RequestParam(name = "pageNo", required = false) String pageNo,
 			@RequestParam(name = "size", required = false) String size) {
 		try {
 			ReceiptGetAllStatus status = new ReceiptGetAllStatus();
-			List<Receipt> lr = receiptService.getReceiptList(receiptType,
-					customerId, fromDateTime, toDateTime, pageNo, size);
+			List<Receipt> lr = receiptService.getReceiptList(receiptStatus,
+					receiptType, customerId, fromDateTime, toDateTime, pageNo,
+					size);
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Receipts fetched Successfully!");
 			status.setAllReceipt(lr);
@@ -77,25 +112,4 @@ public class ReceiptController {
 		}
 	}
 
-	@PutMapping("/receipt")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	ResponseEntity<ReceiptCreateModifyStatus> updateReceipt(
-			@RequestBody Receipt receipt) {
-		try {
-			Receipt outputReceipt = receiptService.updateReceipt(receipt);
-			ReceiptCreateModifyStatus status = new ReceiptCreateModifyStatus();
-			status.setStatus(StatusType.SUCCESS);
-			status.setMessage("Receipt Created Successfuly!");
-			status.setReceipt(outputReceipt);
-			return new ResponseEntity<ReceiptCreateModifyStatus>(status,
-					HttpStatus.CREATED);
-		} catch (Exception e) {
-			ReceiptCreateModifyStatus status = new ReceiptCreateModifyStatus();
-			status.setStatus(StatusType.FAILURE);
-			status.setMessage(e.getMessage());
-			return new ResponseEntity<ReceiptCreateModifyStatus>(status,
-					HttpStatus.CONFLICT);
-		}
-
-	}
 }

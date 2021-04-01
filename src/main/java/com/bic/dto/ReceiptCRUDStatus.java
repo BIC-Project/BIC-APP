@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-public class ReceiptCreateModifyStatus extends Status {
+public class ReceiptCRUDStatus extends Status {
 
 	private Receipt receipt;
 
