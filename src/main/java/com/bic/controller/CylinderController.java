@@ -16,7 +16,6 @@ import com.bic.dto.CylinderGetAllStatus;
 import com.bic.dto.CylinderGetStatus;
 import com.bic.dto.Status.StatusType;
 import com.bic.entity.Cylinder;
-import com.bic.exception.CylinderServiceException;
 import com.bic.service.CylinderService;
 
 @RestController
@@ -37,7 +36,7 @@ public class CylinderController {
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Cylinder found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
-		} catch (CylinderServiceException e) {
+		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
@@ -55,7 +54,7 @@ public class CylinderController {
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Cylinder found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
-		} catch (CylinderServiceException e) {
+		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
