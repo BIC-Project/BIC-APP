@@ -15,7 +15,6 @@ import com.bic.dto.LocationGetAllStatus;
 import com.bic.dto.LocationGetStatus;
 import com.bic.dto.Status.StatusType;
 import com.bic.entity.Location;
-import com.bic.exception.LocationServiceException;
 import com.bic.service.LocationService;
 
 @RestController
@@ -35,7 +34,7 @@ public class LocationController {
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Location found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
-		} catch (LocationServiceException e) {
+		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
@@ -53,7 +52,7 @@ public class LocationController {
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Location found.");
 			return new ResponseEntity<>(status, HttpStatus.OK);
-		} catch (LocationServiceException e) {
+		} catch (Exception e) {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);

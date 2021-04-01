@@ -30,7 +30,6 @@ import com.bic.dto.CustomerRegisterStatus;
 import com.bic.dto.Status.StatusType;
 import com.bic.dto.ValidationErrorStatus;
 import com.bic.entity.Customer;
-import com.bic.exception.CustomerServiceException;
 import com.bic.service.CustomerService;
 
 @RestController
@@ -90,7 +89,7 @@ public class CustomerController {
 			status.setRegisteredCustomerId(id);
 			return new ResponseEntity<CustomerRegisterStatus>(status,
 					HttpStatus.CREATED);
-		} catch (CustomerServiceException e) {
+		} catch (Exception e) {
 			CustomerRegisterStatus status = new CustomerRegisterStatus();
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());

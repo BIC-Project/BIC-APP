@@ -39,6 +39,9 @@ public class ReceiptService {
 	@Value("${app.config.receiptNoCountDR}")
 	private String receiptNoCountDR;
 
+	@Value("${app.config.maxDeleteDays}")
+	private int maxDeleteDays;
+
 	@Autowired
 	private ReceiptRepository receiptRepository;
 
@@ -212,11 +215,10 @@ public class ReceiptService {
 			SimpleDateFormat formatter = new SimpleDateFormat(
 					"dd-MM-yyyy HH:mm:ss");
 			Date currdate = formatter.parse(currDateTime);
-			if (receipt.getDateTime().compareTo(currdate) >= 5
+			if (receipt.getDateTime().compareTo(currdate) >= maxDeleteDays
 					|| receipt.getDateTime().compareTo(currdate) < 0)
 				throw new ReceiptServiceException(
 						"Cannot delete an older receipt.");
-			/////////////
 			String allCylinderStrJSON = receipt.getAllCylinders();
 			if (allCylinderStrJSON == null
 					|| allCylinderStrJSON.trim().isEmpty())
