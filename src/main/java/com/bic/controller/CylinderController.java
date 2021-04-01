@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,43 +21,45 @@ import com.bic.service.CylinderService;
 
 @RestController
 @CrossOrigin
+@Validated
 public class CylinderController {
 
-    @Autowired
-    private CylinderService cylinderService;
+	@Autowired
+	private CylinderService cylinderService;
 
-    @GetMapping("/cylinder")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<CylinderGetAllStatus> getAllCylinder() {
-	CylinderGetAllStatus status = new CylinderGetAllStatus();
-	try {
-	    List<Cylinder> allCylinder = cylinderService.getAll();
-	    status.setAllCylinder(allCylinder);
-	    status.setStatus(StatusType.SUCCESS);
-	    status.setMessage("Cylinders Found");
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	} catch (CylinderServiceException e) {
-	    status.setStatus(StatusType.FAILURE);
-	    status.setMessage(e.getMessage());
-	    return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+	@GetMapping("/cylinder")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<CylinderGetAllStatus> getAllCylinder() {
+		CylinderGetAllStatus status = new CylinderGetAllStatus();
+		try {
+			List<Cylinder> allCylinder = cylinderService.getAll();
+			status.setAllCylinder(allCylinder);
+			status.setStatus(StatusType.SUCCESS);
+			status.setMessage("Cylinders Found");
+			return new ResponseEntity<>(status, HttpStatus.OK);
+		} catch (CylinderServiceException e) {
+			status.setStatus(StatusType.FAILURE);
+			status.setMessage(e.getMessage());
+			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+		}
 	}
-    }
 
-    @GetMapping("/cylinder/{cylinderId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<CylinderGetStatus> getCylinder(@PathVariable int cylinderId) {
-	CylinderGetStatus status = new CylinderGetStatus();
-	try {
-	    Cylinder cylinder = cylinderService.get(cylinderId);
-	    status.setCylinder(cylinder);
-	    status.setStatus(StatusType.SUCCESS);
-	    status.setMessage("Cylinder Found");
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	} catch (CylinderServiceException e) {
-	    status.setStatus(StatusType.FAILURE);
-	    status.setMessage(e.getMessage());
-	    return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+	@GetMapping("/cylinder/{cylinderId}")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<CylinderGetStatus> getCylinder(
+			@PathVariable int cylinderId) {
+		CylinderGetStatus status = new CylinderGetStatus();
+		try {
+			Cylinder cylinder = cylinderService.get(cylinderId);
+			status.setCylinder(cylinder);
+			status.setStatus(StatusType.SUCCESS);
+			status.setMessage("Cylinder Found");
+			return new ResponseEntity<>(status, HttpStatus.OK);
+		} catch (CylinderServiceException e) {
+			status.setStatus(StatusType.FAILURE);
+			status.setMessage(e.getMessage());
+			return new ResponseEntity<>(status, HttpStatus.NOT_FOUND);
+		}
 	}
-    }
 
 }
