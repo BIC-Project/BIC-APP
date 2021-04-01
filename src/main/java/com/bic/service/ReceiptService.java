@@ -158,9 +158,8 @@ public class ReceiptService {
 		if (receiptStatus == null)
 			receiptStatus = true;
 
-
-		if (fromDateTime == null || fromDateTime.trim().isEmpty() || toDateTime == null
-				|| toDateTime.trim().isEmpty())
+		if (fromDateTime == null || fromDateTime.trim().isEmpty()
+				|| toDateTime == null || toDateTime.trim().isEmpty())
 			throw new ReceiptServiceException(
 					"Date is empty! Please select appropriate Date!");
 		Date fromDate, toDate;
