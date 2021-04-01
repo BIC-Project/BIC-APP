@@ -15,22 +15,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "STOCK_TBL")
-//@IdClass(CompositeCustomerCylinder.class)
+// @IdClass(CompositeCustomerCylinder.class)
 @Embeddable
 public class Stock {
 
-//    @Id
-//    @ManyToOne
-//    @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
-//    private Customer customer;
-//
-//    @Id
-//    @ManyToOne
-//    @JoinColumn(name = "cylinderId", referencedColumnName = "cylinderId", nullable = false)
-//    private Cylinder cylinder;
+	// @Id
+	// @ManyToOne
+	// @JoinColumn(name = "customerId", referencedColumnName = "customerId",
+	// nullable = false)
+	// private Customer customer;
+	//
+	// @Id
+	// @ManyToOne
+	// @JoinColumn(name = "cylinderId", referencedColumnName = "cylinderId",
+	// nullable = false)
+	// private Cylinder cylinder;
 
-    @EmbeddedId
-    private CompositeCustomerCylinder CompositeCustomerCylinderId;
-    @Column(nullable = false)
-    private int cylinderStock;
+	@EmbeddedId
+	private CompositeCustomerCylinder compositeCustomerCylinderId;
+	@Column(nullable = false)
+	private int cylinderStock;
 }

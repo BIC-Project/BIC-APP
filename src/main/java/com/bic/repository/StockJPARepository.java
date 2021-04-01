@@ -15,12 +15,12 @@ public interface StockJPARepository
 		extends
 			JpaRepository<Stock, CompositeCustomerCylinder> {
 
-	@Query("SELECT * FROM STOCK WHERE CompositeCustomerCylinderId.customer = :customer ORDER BY"
-			+ "cylinder.cylinderID")
+	@Query("SELECT s FROM Stock s WHERE s.compositeCustomerCylinderId.customer = :customer ORDER BY"
+			+ "  s.compositeCustomerCylinderId.cylinder.cylinderId")
 	public List<Stock> findAllStocksByCustomer(
 			@Param("customer") Customer customer);
 
-	@Query("SELECT * FROM STOCK ORDER BY"
-			+ "customer.customerName, cylinder.cylinderID")
+	@Query("SELECT s FROM Stock s ORDER BY"
+			+ "  s.compositeCustomerCylinderId.customer.customerName, s.compositeCustomerCylinderId.cylinder.cylinderId")
 	public List<Stock> findAllStocks(Pageable pageble);
 }
