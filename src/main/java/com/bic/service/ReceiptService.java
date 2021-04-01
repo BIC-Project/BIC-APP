@@ -252,8 +252,10 @@ public class ReceiptService {
 			if (!isdeleted)
 				throw new ReceiptServiceException(
 						"Cannot delete the receipt. Stock quantity deviation");
-			else
+			else {
 				receipt.setReceiptStatus(false);
+				receiptRepository.save(receipt);
+			}
 			return receipt;
 		}
 	}
