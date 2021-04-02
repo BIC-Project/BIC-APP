@@ -113,7 +113,6 @@ public class CustomerController {
 			return new ResponseEntity<CustomerGetStatus>(status,
 					HttpStatus.NOT_FOUND);
 		}
-
 	}
 
 	@GetMapping("/customer")
@@ -152,6 +151,5 @@ public class CustomerController {
 			return new ResponseEntity<CustomerGetStatus>(status,
 					HttpStatus.BAD_REQUEST);
 		}
-
 	}
 }

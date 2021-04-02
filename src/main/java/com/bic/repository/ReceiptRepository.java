@@ -1,8 +1,8 @@
 package com.bic.repository;
 
 import java.util.Date;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,11 +14,11 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
 
 	public Receipt findByReceiptId(int receiptId);
 
-	public List<Receipt> findByReceiptStatusAndReceiptTypeAndCustomerAndDateTimeBetweenOrderByDateTimeDesc(
+	public Page<Receipt> findByReceiptStatusAndReceiptTypeAndCustomerAndDateTimeBetween(
 			boolean receiptStatus, ReceiptType receiptType, Customer customer,
 			Date start, Date end, Pageable pageble);
 
-	public List<Receipt> findByReceiptStatusAndReceiptTypeAndDateTimeBetweenOrderByDateTimeDesc(
+	public Page<Receipt> findByReceiptStatusAndReceiptTypeAndDateTimeBetween(
 			boolean receiptStatus, ReceiptType receiptType, Date start,
 			Date end, Pageable pageble);
 
