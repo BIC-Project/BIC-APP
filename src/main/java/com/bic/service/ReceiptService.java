@@ -4,13 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,20 +158,17 @@ public class ReceiptService {
 
 	}
 
-	public List<Receipt> getReceiptList(Boolean receiptStatus,
+	public Page<Receipt> getReceiptList(Boolean receiptStatus,
 			String receiptType, String customerId, String fromDateTime,
 			String toDateTime, String pageNoStr, String sizeStr) {
 		if (receiptType == null)
 			throw new ReceiptServiceException(
 					"Receipt type not selected! Please select a valid receipt type.");
-
 		if (!receiptType.equals(ReceiptType.ER.toString())
 				&& !receiptType.equals(ReceiptType.DR.toString()))
 			throw new ReceiptServiceException("Receipt type is invalid!");
-
 		if (receiptStatus == null)
 			receiptStatus = true;
-
 		if (fromDateTime == null || fromDateTime.trim().isEmpty()
 				|| toDateTime == null || toDateTime.trim().isEmpty())
 			throw new ReceiptServiceException(
@@ -200,20 +198,21 @@ public class ReceiptService {
 		try {
 			if (pageNoStr != null && !pageNoStr.trim().isEmpty()
 					&& !pageNoStr.trim().equals("0"))
-				pageNo = Math.abs(Integer.parseInt(pageNoStr)) - 1;
+				pageNo = Math.abs(Integer.parseInt(pageNoStr));
 			if (sizeStr != null && !sizeStr.trim().isEmpty())
 				size = Math.abs(Integer.parseInt(sizeStr));
 		} catch (Exception e) {
 			throw new ReceiptServiceException("Invalid page no.");
 		}
-		Pageable page = PageRequest.of(pageNo, size);
+		Pageable page = PageRequest.of(pageNo, size,
+				Sort.by("dateTime").descending());
 		if (customerId == null || customerId.trim().isEmpty()) {
 
-			List<Receipt> lr = receiptRepository
-					.findByReceiptStatusAndReceiptTypeAndDateTimeBetweenOrderByDateTimeDesc(
+			Page<Receipt> lr = receiptRepository
+					.findByReceiptStatusAndReceiptTypeAndDateTimeBetween(
 							receiptStatus, ReceiptType.valueOf(receiptType),
 							fromDate, toDate, page);
-			if (lr == null || lr.size() <= 0)
+			if (lr == null || !lr.hasContent())
 				throw new ReceiptServiceException("No receipt found.");
 			return lr;
 		}
@@ -224,11 +223,11 @@ public class ReceiptService {
 			Customer customer = new Customer();
 			customer.setCustomerId(custId);
 
-			List<Receipt> lr = receiptRepository
-					.findByReceiptStatusAndReceiptTypeAndCustomerAndDateTimeBetweenOrderByDateTimeDesc(
+			Page<Receipt> lr = receiptRepository
+					.findByReceiptStatusAndReceiptTypeAndCustomerAndDateTimeBetween(
 							receiptStatus, ReceiptType.valueOf(receiptType),
 							customer, fromDate, toDate, page);
-			if (lr == null || lr.size() <= 0)
+			if (lr == null)
 				throw new ReceiptServiceException("No receipt found.");
 			return lr;
 		} catch (Exception e) {

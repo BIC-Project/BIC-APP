@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,28 +36,31 @@ public class StockService {
 
 		List<Stock> stocklst = stockJPARepository
 				.findAllStocksByCustomer(customer.get());
-		if (stocklst == null)
+		if (stocklst == null || stocklst.size() <= 0)
 			throw new StockServiceException(
 					"No stocks found for given customer.");
 		return stocklst;
 	}
 
-	public List<Stock> getAll(String pageNoStr, String sizeStr) {
+	public Page<Stock> getAll(String pageNoStr, String sizeStr) {
 
 		int pageNo = 0;
 		int size = 10;
 		try {
-			if (pageNoStr == null || pageNoStr.trim().isEmpty())
+			if (pageNoStr != null && !pageNoStr.trim().isEmpty())
 				pageNo = Math.abs(Integer.parseInt(pageNoStr));
-			if (sizeStr == null || sizeStr.trim().isEmpty())
+			if (sizeStr != null && sizeStr.trim().isEmpty())
 				size = Math.abs(Integer.parseInt(pageNoStr));
 		} catch (Exception e) {
 			throw new StockServiceException("Invalid page no./page size.");
 		}
 
-		Pageable page = PageRequest.of(pageNo, size);
-		List<Stock> stocklst = stockJPARepository.findAllStocks(page);
-		if (stocklst == null)
+		Pageable page = PageRequest.of(pageNo, size, Sort
+				.by("compositeCustomerCylinderId.customer.customerName")
+				.and(Sort.by(
+						"compositeCustomerCylinderId.cylinder.cylinderId")));
+		Page<Stock> stocklst = stockJPARepository.findAllStocks(page);
+		if (stocklst == null || !stocklst.hasContent())
 			throw new StockServiceException("No stocks found.");
 		return stocklst;
 	}

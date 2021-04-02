@@ -1,6 +1,6 @@
 package com.bic.dto;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.bic.entity.Receipt;
 
@@ -11,5 +11,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class ReceiptGetAllStatus extends Status {
 
-    List<Receipt> allReceipt;
+	Page<Receipt> allReceipt;
 }

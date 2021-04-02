@@ -1,7 +1,6 @@
 package com.bic.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -9,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -134,7 +134,7 @@ public class ReceiptController {
 			@RequestParam(name = "size", required = false) String size) {
 		ReceiptGetAllStatus status = new ReceiptGetAllStatus();
 		try {
-			List<Receipt> lr = receiptService.getReceiptList(receiptStatus,
+			Page<Receipt> lr = receiptService.getReceiptList(receiptStatus,
 					receiptType, customerId, fromDateTime, toDateTime, pageNo,
 					size);
 			status.setStatus(StatusType.SUCCESS);

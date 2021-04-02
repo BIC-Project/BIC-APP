@@ -3,6 +3,7 @@ package com.bic.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bic.dto.Status.StatusType;
 import com.bic.dto.StockGetAllStatus;
+import com.bic.dto.StockGetStatus;
 import com.bic.entity.Stock;
 import com.bic.service.StockService;
 
@@ -31,7 +33,7 @@ public class StockController {
 			@RequestParam(name = "size", required = false) String size) {
 		StockGetAllStatus status = new StockGetAllStatus();
 		try {
-			List<Stock> allStocks = stockService.getAll(pageNo, size);
+			Page<Stock> allStocks = stockService.getAll(pageNo, size);
 			status.setAllStocks(allStocks);
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Stocks found.");
@@ -45,9 +47,9 @@ public class StockController {
 
 	@GetMapping("/stock/{customerId}")
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	public ResponseEntity<StockGetAllStatus> getStockByCustomer(
+	public ResponseEntity<StockGetStatus> getStockByCustomer(
 			@PathVariable int customerId) {
-		StockGetAllStatus status = new StockGetAllStatus();
+		StockGetStatus status = new StockGetStatus();
 		try {
 			List<Stock> allStocks = stockService.getbyCustomerId(customerId);
 			status.setAllStocks(allStocks);

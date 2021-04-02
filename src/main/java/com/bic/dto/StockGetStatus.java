@@ -1,6 +1,6 @@
 package com.bic.dto;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
 
 import com.bic.entity.Stock;
 
@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class StockGetAllStatus extends Status {
-	private Page<Stock> allStocks;
+public class StockGetStatus extends Status {
+
+	List<Stock> allStocks;
 }
