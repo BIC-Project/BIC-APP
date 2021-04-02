@@ -9,7 +9,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class ValidationErrorStatus extends Status {
-
 	Map<String, String> errors = new HashMap<>();
-
 }

@@ -1,15 +1,10 @@
 package com.bic.dto;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class CustomerRegisterStatus extends Status {
-
-    private int registeredCustomerId;
-
-    public int getRegisteredCustomerId() {
-	return registeredCustomerId;
-    }
-
-    public void setRegisteredCustomerId(int registeredCustomerId) {
-	this.registeredCustomerId = registeredCustomerId;
-    }
-
+	private int registeredCustomerId;
 }

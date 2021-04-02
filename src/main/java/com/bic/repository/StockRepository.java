@@ -12,6 +12,7 @@ import com.bic.entity.Customer;
 import com.bic.entity.Cylinder;
 import com.bic.entity.ReceiptType;
 import com.bic.entity.Stock;
+import com.bic.exception.StockServiceException;
 
 @Repository
 public class StockRepository {
@@ -22,45 +23,44 @@ public class StockRepository {
 	public boolean saveAll(CylinderStockQty[] allCylinderStock,
 			Customer customer, ReceiptType receiptType) {
 
-		try {
-			for (CylinderStockQty cylinderStockQty : allCylinderStock) {
-				Cylinder cylinder = new Cylinder();
-				cylinder.setCylinderId(cylinderStockQty.getCylinderId());
-				CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(
-						customer, cylinder);
-				entityManager.find(Stock.class, compositeCustomerCylinderPK,
-						LockModeType.PESSIMISTIC_WRITE);
-			}
-			for (CylinderStockQty cylinderStockQty : allCylinderStock) {
-				Cylinder cylinder = new Cylinder();
-				int cylinderStock = cylinderStockQty.getCylinderStock();
-				cylinder.setCylinderId(cylinderStockQty.getCylinderId());
-				CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(
-						customer, cylinder);
-				Stock stock = entityManager.find(Stock.class,
-						compositeCustomerCylinderPK);
-				if (stock == null) {
-					Stock newStock = new Stock(compositeCustomerCylinderPK,
-							cylinderStock);
-					entityManager.persist(newStock);
+		for (CylinderStockQty cylinderStockQty : allCylinderStock) {
+			Cylinder cylinder = new Cylinder();
+			cylinder.setCylinderId(cylinderStockQty.getCylinderId());
+			CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(
+					customer, cylinder);
+			entityManager.find(Stock.class, compositeCustomerCylinderPK,
+					LockModeType.PESSIMISTIC_WRITE);
+		}
+		for (CylinderStockQty cylinderStockQty : allCylinderStock) {
+			Cylinder cylinder = new Cylinder();
+			int cylinderStock = cylinderStockQty.getCylinderStock();
+			cylinder.setCylinderId(cylinderStockQty.getCylinderId());
+			CompositeCustomerCylinder compositeCustomerCylinderPK = new CompositeCustomerCylinder(
+					customer, cylinder);
+			Stock stock = entityManager.find(Stock.class,
+					compositeCustomerCylinderPK);
+			if (stock == null && receiptType.equals(ReceiptType.ER)) {
+				Stock newStock = new Stock(compositeCustomerCylinderPK,
+						cylinderStock);
+				entityManager.persist(newStock);
+			} else {
+				if (receiptType.equals(ReceiptType.ER)) {
+					int oldCylinderStock = stock.getCylinderStock();
+					stock.setCylinderStock(oldCylinderStock + cylinderStock);
 				} else {
-					if (receiptType.equals(ReceiptType.ER)) {
-						int oldCylinderStock = stock.getCylinderStock();
-						stock.setCylinderStock(
-								oldCylinderStock + cylinderStock);
-					} else {
-						int oldCylinderStock = stock.getCylinderStock();
-						if (cylinderStock > oldCylinderStock)
-							return false;
-						stock.setCylinderStock(
-								oldCylinderStock - cylinderStock);
-					}
+					if (stock == null)
+						throw new StockServiceException(
+								"Error! Delivery cylinder qty is greater than stock.");
+					int oldCylinderStock = stock.getCylinderStock();
+					if (cylinderStock > oldCylinderStock)
+						throw new StockServiceException(
+								"Error! Delivery cylinder qty is greater than stock qty.");
+					stock.setCylinderStock(oldCylinderStock - cylinderStock);
 				}
 			}
-			return true;
-		} catch (Exception e) {
-			return false;
 		}
+		return true;
+
 	}
 
 	public boolean deleteAll(CylinderStockQty[] allCylinderStock,

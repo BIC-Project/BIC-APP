@@ -19,6 +19,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
@@ -43,14 +45,14 @@ public class Receipt {
 
 	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "ENUM('ER', 'DR')", nullable = false)
-	@Pattern(regexp = "^[ED]R$", message = "Invalid receipt type. A valid receipt type is ER or DR.")
-	@NotBlank(message = "Receipt type cannot be blank.")
+	@javax.validation.constraints.NotNull(message = "Receipt type cannot be blank.")
 	private ReceiptType receiptType;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@NotBlank(message = "Receipt creation date cannot be blank.")
+	@javax.validation.constraints.NotNull(message = "Date cannot be blank.")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date dateTime;
 
 	@Column(nullable = false)
@@ -58,8 +60,13 @@ public class Receipt {
 
 	@ManyToOne
 	@JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
-	@NotBlank(message = "Customer cannot be blank.")
+	@javax.validation.constraints.NotNull(message = "Customer cannot be blank.")
 	private Customer customer;
+
+	@ManyToOne
+	@JoinColumn(name = "locationId", referencedColumnName = "locationId", nullable = false)
+	@javax.validation.constraints.NotNull(message = "Location cannot be blank.")
+	private Location location;
 
 	@Column(columnDefinition = "varchar(30)", nullable = false)
 	@NotBlank(message = "Vehicle no. cannot be blank.")
@@ -82,5 +89,6 @@ public class Receipt {
 	private String allCylinders;
 
 	@Column(nullable = false)
-	private boolean receiptStatus;
+	private Boolean receiptStatus;
+
 }
