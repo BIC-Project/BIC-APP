@@ -47,14 +47,14 @@ public class ReceiptController {
 			MethodArgumentNotValidException e) {
 		ValidationErrorStatus status = new ValidationErrorStatus();
 		status.setStatus(StatusType.FAILURE);
-		status.setMessage("Validation error");
+		status.setMessage("Validation error.");
 		Map<String, String> errors = new HashMap<>();
 		e.getBindingResult().getAllErrors().forEach((error) -> {
 			String fieldName = ((FieldError) error).getField();
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
 		});
-		// status.setErrors(errors);
+		status.setErrors(errors);
 		return new ResponseEntity<ValidationErrorStatus>(status,
 				HttpStatus.BAD_REQUEST);
 	}
@@ -65,7 +65,7 @@ public class ReceiptController {
 			ConstraintViolationException e) {
 		ValidationErrorStatus status = new ValidationErrorStatus();
 		status.setStatus(StatusType.FAILURE);
-		status.setMessage("Validation error");
+		status.setMessage("Validation error.");
 		Map<String, String> errors = new HashMap<>();
 		e.getConstraintViolations().forEach((error) -> {
 			String fieldName = error.getPropertyPath().toString();
@@ -82,22 +82,20 @@ public class ReceiptController {
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ReceiptCRUDStatus> saveReceipt(
 			@Validated @RequestBody Receipt receipt) {
+		ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 
 		try {
 			Receipt outputReceipt = receiptService.saveReceipt(receipt);
-			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
-
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Receipt created successfuly!");
 			status.setReceipt(outputReceipt);
 			return new ResponseEntity<ReceiptCRUDStatus>(status,
 					HttpStatus.CREATED);
 		} catch (Exception e) {
-			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<ReceiptCRUDStatus>(status,
-					HttpStatus.CONFLICT);
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -106,23 +104,21 @@ public class ReceiptController {
 	public ResponseEntity<ReceiptCRUDStatus> deleteReceipt(
 			@PathVariable int receiptId,
 			@RequestParam("currDateTime") String currDateTime) {
+		ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 
 		try {
 			Receipt outputReceipt = receiptService.deleteReceipt(receiptId,
 					currDateTime);
-			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
-
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Receipt deleted successfully!");
 			status.setReceipt(outputReceipt);
 			return new ResponseEntity<ReceiptCRUDStatus>(status,
 					HttpStatus.CREATED);
 		} catch (Exception e) {
-			ReceiptCRUDStatus status = new ReceiptCRUDStatus();
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<ReceiptCRUDStatus>(status,
-					HttpStatus.CONFLICT);
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -136,8 +132,8 @@ public class ReceiptController {
 			@RequestParam(name = "receiptStatus", required = false) Boolean receiptStatus,
 			@RequestParam(name = "pageNo", required = false) String pageNo,
 			@RequestParam(name = "size", required = false) String size) {
+		ReceiptGetAllStatus status = new ReceiptGetAllStatus();
 		try {
-			ReceiptGetAllStatus status = new ReceiptGetAllStatus();
 			List<Receipt> lr = receiptService.getReceiptList(receiptStatus,
 					receiptType, customerId, fromDateTime, toDateTime, pageNo,
 					size);
@@ -147,11 +143,10 @@ public class ReceiptController {
 			return new ResponseEntity<ReceiptGetAllStatus>(status,
 					HttpStatus.OK);
 		} catch (Exception e) {
-			ReceiptGetAllStatus status = new ReceiptGetAllStatus();
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<ReceiptGetAllStatus>(status,
-					HttpStatus.CONFLICT);
+					HttpStatus.NOT_FOUND);
 		}
 	}
 

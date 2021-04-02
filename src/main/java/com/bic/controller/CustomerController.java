@@ -71,30 +71,28 @@ public class CustomerController {
 			String errorMessage = error.getMessageTemplate();
 			errors.put(fieldName, errorMessage);
 		});
-
 		status.setErrors(errors);
 		return new ResponseEntity<ValidationErrorStatus>(status,
 				HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/customer")
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<CustomerRegisterStatus> register(
 			@Validated @RequestBody Customer customer) {
+		CustomerRegisterStatus status = new CustomerRegisterStatus();
 		try {
 			int id = customerService.register(customer);
-			CustomerRegisterStatus status = new CustomerRegisterStatus();
 			status.setStatus(StatusType.SUCCESS);
 			status.setMessage("Customer registered successfully!");
 			status.setRegisteredCustomerId(id);
 			return new ResponseEntity<CustomerRegisterStatus>(status,
 					HttpStatus.CREATED);
 		} catch (Exception e) {
-			CustomerRegisterStatus status = new CustomerRegisterStatus();
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<CustomerRegisterStatus>(status,
-					HttpStatus.CONFLICT);
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -135,7 +133,6 @@ public class CustomerController {
 			return new ResponseEntity<CustomerGetAllStatus>(status,
 					HttpStatus.NOT_FOUND);
 		}
-
 	}
 
 	@PutMapping("/customer")
@@ -153,7 +150,7 @@ public class CustomerController {
 			status.setStatus(StatusType.FAILURE);
 			status.setMessage(e.getMessage());
 			return new ResponseEntity<CustomerGetStatus>(status,
-					HttpStatus.NOT_FOUND);
+					HttpStatus.BAD_REQUEST);
 		}
 
 	}

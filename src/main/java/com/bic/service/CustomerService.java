@@ -19,15 +19,29 @@ public class CustomerService {
 	private CustomerRepository customerRepository;
 
 	public int register(Customer customer) throws CustomerServiceException {
-		if (!customerRepository
-				.existsByCustomerName(customer.getCustomerName())) {
-			customer.setActive(true);
-			Customer custObj = customerRepository.save(customer);
-			return custObj.getCustomerId();
-			// suppose we want to send an email confirmation
-			// then that code will be here..
-		} else
+
+		customer.setIsActive(true);
+		customer.setCustomerName(
+				customer.getCustomerName().trim().toLowerCase());
+		customer.setCustomerPinCode(customer.getCustomerPinCode().trim());
+		customer.setContactName1(customer.getContactName1().trim());
+		if (customer.getContactName2() != null
+				&& !customer.getContactName2().trim().isEmpty())
+			customer.setContactName2(customer.getContactName2().trim());
+		else
+			customer.setContactName2(null);
+		customer.setContactNumber1(customer.getContactNumber1().trim());
+		if (customer.getContactNumber2() != null
+				&& !customer.getContactNumber2().trim().isEmpty())
+			customer.setContactNumber2(customer.getContactNumber2().trim());
+		else
+			customer.setContactNumber2(null);
+		customer.setCustomerAddress(customer.getCustomerAddress().trim());
+
+		if (customerRepository.existsByCustomerName(customer.getCustomerName()))
 			throw new CustomerServiceException("Customer name already exists!");
+		Customer custObj = customerRepository.save(customer);
+		return custObj.getCustomerId();
 	}
 
 	public Customer get(int customerId) throws CustomerServiceException {
@@ -47,26 +61,45 @@ public class CustomerService {
 	}
 
 	public void update(Customer customer) throws CustomerServiceException {
-
+		System.out.println(customer);
 		if (Integer.valueOf(customer.getCustomerId()) == null
 				|| customer.getCustomerName() == null
 				|| customer.getCustomerName().trim().isEmpty())
 			throw new CustomerServiceException(
 					"Error! Customer id/name not present!");
+		if (customer.getIsActive() == null)
+			throw new CustomerServiceException(
+					"Error! Please provide valid customer status.");
+		System.out.println(customer.getIsActive());
+		customer.setCustomerName(customer.getCustomerName().trim());
+		customer.setCustomerPinCode(customer.getCustomerPinCode().trim());
+		customer.setContactName1(customer.getContactName1().trim());
+		if (customer.getContactName2() != null
+				&& !customer.getContactName2().trim().isEmpty())
+			customer.setContactName2(customer.getContactName2().trim());
+		else
+			customer.setContactName2(null);
+		customer.setContactNumber1(customer.getContactNumber1().trim());
+		if (customer.getContactNumber2() != null
+				&& !customer.getContactNumber2().trim().isEmpty())
+			customer.setContactNumber2(customer.getContactNumber2().trim());
+		else
+			customer.setContactNumber2(null);
+
+		customer.setCustomerAddress(customer.getCustomerAddress().trim());
 
 		Optional<Customer> oldCustomerOpt = customerRepository
 				.findById(customer.getCustomerId());
 
 		if (!oldCustomerOpt.isPresent())
-			throw new CustomerServiceException("Illegel customer id.");
+			throw new CustomerServiceException("Illegal customer id.");
 
 		Customer oldCustomer = oldCustomerOpt.get();
-		if (!oldCustomer.getCustomerName()
-				.equalsIgnoreCase(customer.getCustomerName()))
+		if (!oldCustomer.getCustomerName().trim().toLowerCase()
+				.equalsIgnoreCase(
+						customer.getCustomerName().trim().toLowerCase()))
 			throw new CustomerServiceException("Cannot change customer name!");
 
 		customerRepository.save(customer);
-
 	}
-
 }

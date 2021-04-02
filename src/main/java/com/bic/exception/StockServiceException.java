@@ -6,12 +6,10 @@ public class StockServiceException extends RuntimeException {
 
 	public StockServiceException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public StockServiceException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 }

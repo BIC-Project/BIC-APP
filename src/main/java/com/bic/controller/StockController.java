@@ -49,7 +49,6 @@ public class StockController {
 			@PathVariable int customerId) {
 		StockGetAllStatus status = new StockGetAllStatus();
 		try {
-
 			List<Stock> allStocks = stockService.getbyCustomerId(customerId);
 			status.setAllStocks(allStocks);
 			status.setStatus(StatusType.SUCCESS);
