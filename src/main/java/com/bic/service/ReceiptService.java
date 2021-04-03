@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bic.dto.CylinderStockQty;
 import com.bic.entity.Config;
 import com.bic.entity.Customer;
+import com.bic.entity.Location;
 import com.bic.entity.Receipt;
 import com.bic.entity.ReceiptType;
 import com.bic.exception.ReceiptServiceException;
@@ -66,7 +67,12 @@ public class ReceiptService {
 		try {
 			if (receiptRepository.existsById(receipt.getReceiptId()))
 				throw new ReceiptServiceException("Receipt id already exists!");
-			System.out.println(receipt.getReceiptType());
+			if (!locationRepository
+					.existsById(receipt.getLocation().getLocationId()))
+				throw new ReceiptServiceException("Invalid Location.");
+			Optional<Location> locationOpt = locationRepository
+					.findById(receipt.getLocation().getLocationId());
+			Location location = locationOpt.get();
 			if (receipt.getReceiptType() != ReceiptType.ER
 					&& receipt.getReceiptType() != ReceiptType.DR)
 				throw new ReceiptServiceException("Receipt type is invalid!");
@@ -80,7 +86,6 @@ public class ReceiptService {
 			if (!customer.getIsActive())
 				throw new ReceiptServiceException(
 						"Selected customer is inactive! Please activate the customer!");
-
 			if (locationRepository.findByLocationId(
 					receipt.getLocation().getLocationId()) == null)
 				throw new ReceiptServiceException(
@@ -108,8 +113,9 @@ public class ReceiptService {
 				if (cylinderStockQty.getCylinderStock() <= 0)
 					throw new ReceiptServiceException("Illegal cylinder qty.");
 			}
+
 			boolean isStockSaved = stockRepository.saveAll(allCylinderStock,
-					customer, receiptType);
+					location, customer, receiptType);
 			if (isStockSaved) {
 				Config config = null;
 				if (receipt.getReceiptType().equals(ReceiptType.ER))
@@ -213,7 +219,7 @@ public class ReceiptService {
 							receiptStatus, ReceiptType.valueOf(receiptType),
 							fromDate, toDate, page);
 			if (lr == null || !lr.hasContent())
-				throw new ReceiptServiceException("No receipt found.");
+				throw new ReceiptServiceException("No receipts found.");
 			return lr;
 		}
 		try {
@@ -222,13 +228,12 @@ public class ReceiptService {
 				throw new ReceiptServiceException();
 			Customer customer = new Customer();
 			customer.setCustomerId(custId);
-
 			Page<Receipt> lr = receiptRepository
 					.findByReceiptStatusAndReceiptTypeAndCustomerAndDateTimeBetween(
 							receiptStatus, ReceiptType.valueOf(receiptType),
 							customer, fromDate, toDate, page);
-			if (lr == null)
-				throw new ReceiptServiceException("No receipt found.");
+			if (lr == null || !lr.hasContent())
+				throw new ReceiptServiceException("No receipts found.");
 			return lr;
 		} catch (Exception e) {
 			throw new ReceiptServiceException(e.getMessage());
@@ -276,7 +281,8 @@ public class ReceiptService {
 					throw new ReceiptServiceException("Illegal cylinder qty.");
 			}
 			boolean isdeleted = stockRepository.deleteAll(allCylinderStock,
-					receipt.getCustomer(), receipt.getReceiptType());
+					receipt.getLocation(), receipt.getCustomer(),
+					receipt.getReceiptType());
 			if (!isdeleted)
 				throw new ReceiptServiceException(
 						"Cannot delete receipt. Stock quantity deviation.");

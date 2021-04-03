@@ -8,21 +8,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.bic.entity.CompositeCustomerCylinder;
+import com.bic.entity.CompositeLocationCustomerCylinder;
 import com.bic.entity.Customer;
+import com.bic.entity.Location;
 import com.bic.entity.Stock;
 
 public interface StockJPARepository
 		extends
-			JpaRepository<Stock, CompositeCustomerCylinder> {
+			JpaRepository<Stock, CompositeLocationCustomerCylinder> {
 
-	@Query("SELECT s FROM Stock s WHERE s.compositeCustomerCylinderId.customer = :customer ORDER BY"
+	@Query("SELECT s FROM Stock s WHERE s.compositeCustomerCylinderId.location = :location and s.compositeCustomerCylinderId.customer = :customer ORDER BY"
 			+ "  s.compositeCustomerCylinderId.cylinder.cylinderId")
-	public List<Stock> findAllStocksByCustomer(
+	public List<Stock> findAllStocksByLocationByCustomer(
+			@Param("location") Location location,
 			@Param("customer") Customer customer);
 
-	@Query("SELECT s FROM Stock s") // ORDER BY")
-	// + " s.compositeCustomerCylinderId.customer.customerName,
-	// s.compositeCustomerCylinderId.cylinder.cylinderId")
-	public Page<Stock> findAllStocks(Pageable pageble);
+	@Query("SELECT s FROM Stock s WHERE s.compositeCustomerCylinderId.location = :location")
+	public Page<Stock> findAllStocksByLocation(
+			@Param("location") Location location, Pageable pageble);
 }

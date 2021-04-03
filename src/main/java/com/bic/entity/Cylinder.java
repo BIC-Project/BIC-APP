@@ -22,18 +22,18 @@ import lombok.NoArgsConstructor;
 @Table(name = "Cylinder_TBL")
 public class Cylinder {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int cylinderId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int cylinderId;
 
-    @ManyToOne
-    @JoinColumn(name = "gasId", referencedColumnName = "gasId", nullable = false)
-    private Gas gas;
+	@ManyToOne
+	@JoinColumn(name = "gasId", referencedColumnName = "gasId", nullable = false)
+	private Gas gas;
 
-    @Column(columnDefinition = "float(5,2)", nullable = false)
-    private double cylinderCapacity;
+	@Column(columnDefinition = "float(5,2)", nullable = false)
+	private double cylinderCapacity;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('KG', 'LT', 'M3')", nullable = false)
-    private CylinderUnit cylinderUnit;
+	@Enumerated(EnumType.STRING)
+	@Column(columnDefinition = "ENUM('KG', 'LT', 'M3')", nullable = false)
+	private CylinderUnit cylinderUnit;
 }
