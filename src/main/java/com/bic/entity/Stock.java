@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 public class Stock {
 
 	@EmbeddedId
-	private CompositeCustomerCylinder compositeCustomerCylinderId;
+	private CompositeLocationCustomerCylinder compositeCustomerCylinderId;
 	@Column(nullable = false)
 	private int cylinderStock;
 }
 
-// @IdClass(CompositeCustomerCylinder.class)
+// @IdClass(CompositeLocationCustomerCylinder.class)
 
 // @Id
 // @ManyToOne

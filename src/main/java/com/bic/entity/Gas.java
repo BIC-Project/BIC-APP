@@ -18,15 +18,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "GAS_TBL")
 public class Gas {
 
-    @Id
-    @Column(columnDefinition = "varchar(10)")
-    private String gasId;
+	@Id
+	@Column(columnDefinition = "varchar(10)")
+	private String gasId;
 
-    @Column(columnDefinition = "varchar(30)", unique = true, nullable = false)
-    private String gasName;
+	@Column(columnDefinition = "varchar(30)", unique = true, nullable = false)
+	private String gasName;
 
-    @ManyToOne
-    @JoinColumn(name = "gasFamilyId", referencedColumnName = "gasFamilyId", nullable = false)
-    private GasFamily gasFamily;
+	@ManyToOne
+	@JoinColumn(name = "gasFamilyId", referencedColumnName = "gasFamilyId", nullable = false)
+	private GasFamily gasFamily;
 
 }
