@@ -6,6 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 import com.bic.dto.AuthenticationRequest;
+import com.bic.entity.User;
+import com.bic.repository.UserRepository;
 
 @Service
 public class AuthenticateUserService {
@@ -14,12 +16,17 @@ public class AuthenticateUserService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    CustomUserDetailsService customUserDetailsService;
-
+    private UserRepository userRepository;
+    
     public void authenticate(AuthenticationRequest authRequest) throws Exception {
-
 	authenticationManager.authenticate(
 		new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
-
+    }
+    
+    public User findByUserName(String username) {
+    	User user =userRepository.findByUserName(username);
+    	if(null != user && !user.getUserName().trim().isEmpty() && !user.getRoles().trim().isEmpty())
+    		return user;
+    	return null;
     }
 }

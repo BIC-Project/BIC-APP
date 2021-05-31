@@ -1,6 +1,7 @@
 package com.bic.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +30,9 @@ public class UserCntr {
 
 	@Autowired
 	AuthenticateUserService authenticateUserService;
+	
+	@Value("${app.expiry.time}")
+	private Long expTime;
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthenticationStatus> generateToken(
@@ -42,6 +46,9 @@ public class UserCntr {
 			authenticationStatus.setStatus(StatusType.SUCCESS);
 			authenticationStatus.setMessage("Login successful!");
 			authenticationStatus.setAuthToken(authToken);
+			authenticationStatus.setUserName(authRequest.getUserName());
+			authenticationStatus.setRoles(authenticateUserService.findByUserName(authRequest.getUserName()).getRoles());
+			authenticationStatus.setExpTime(expTime);
 			return new ResponseEntity<AuthenticationStatus>(
 					authenticationStatus, HttpStatus.OK);
 		} catch (Exception e) {
